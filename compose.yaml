@@ -1,0 +1,21 @@
+services:
+  # Site de produção (build estático + nginx): http://localhost:8080
+  web:
+    build: .
+    ports:
+      - "8080:80"
+
+  # Desenvolvimento com hot reload: docker compose --profile dev up dev
+  dev:
+    profiles: [dev]
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+
+volumes:
+  node_modules:

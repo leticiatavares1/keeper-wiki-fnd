@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+		<script>
+			// Aplica o tema escolhido antes do primeiro paint (sem escolha, segue o sistema).
+			try {
+				const t = localStorage.getItem('tema');
+				if (t === 'noite' || t === 'pergaminho') document.documentElement.dataset.theme = t;
+			} catch {}
+		</script>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>

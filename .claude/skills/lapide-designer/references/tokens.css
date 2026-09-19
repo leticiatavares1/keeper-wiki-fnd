@@ -1,0 +1,105 @@
+/* Lápide — tokens. Gerado de references/tokens.json. Não edite à mão: regenere.
+   Tema padrão: Noite (escuro). Pergaminho (claro) via data-theme="pergaminho"
+   ou, sem escolha explícita, quando o sistema pede tema claro. */
+@import url("https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Pixelify+Sans:wght@400..700&family=Silkscreen:wght@400;700&display=swap");
+
+:root {
+  color-scheme: dark;
+  --font-pixel: "Pixelify Sans", "Courier New", monospace;
+  --font-serif: Alegreya, Georgia, serif;
+  --font-label: Silkscreen, "Courier New", monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-0: 0;
+  --radius-1: 2px;
+  --border-frame: 2px;
+  --surface-000: #15130e;
+  --surface-100: #221f17;
+  --surface-200: #2f2a1f;
+  --ink: #eee3c6;
+  --ink-muted: #b4a684;
+  --line: #4a3f2c;
+  --line-strong: #8a7853;
+  --moss: #7e9a45;
+  --on-moss: #15130e;
+  --moss-text: #a8c46c;
+  --moss-soft: #2c3420;
+  --candle: #e3ab3f;
+  --on-candle: #15130e;
+  --candle-text: #eab85a;
+  --candle-soft: #3a2e17;
+  --blood: #d4574a;
+  --on-blood: #15130e;
+  --blood-text: #e0786c;
+  --blood-soft: #3a1f1a;
+  --night: #7f9bb0;
+  --night-text: #9fb6c7;
+  --night-soft: #1f2a31;
+  --focus: #eab85a;
+  --shadow-pixel: 4px 4px 0 0 #0a0907;
+  --shadow-press: 2px 2px 0 0 #0a0907;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="noite"]) {
+    color-scheme: light;
+    --surface-000: #d8c69c;
+    --surface-100: #eadcb6;
+    --surface-200: #f5ecd3;
+    --ink: #2a2116;
+    --ink-muted: #5a4a32;
+    --line: #b39f76;
+    --line-strong: #6e5a3a;
+    --moss: #4a6420;
+    --on-moss: #f5ecd3;
+    --moss-text: #3f561a;
+    --moss-soft: #d7d9a9;
+    --candle: #8a5606;
+    --on-candle: #f5ecd3;
+    --candle-text: #7e4f05;
+    --candle-soft: #efd7a0;
+    --blood: #9e2f25;
+    --on-blood: #f5ecd3;
+    --blood-text: #8e281f;
+    --blood-soft: #efc6b8;
+    --night: #3d5a70;
+    --night-text: #34506a;
+    --night-soft: #ccd6d6;
+    --focus: #7e4f05;
+    --shadow-pixel: 4px 4px 0 0 #6e5a3a;
+    --shadow-press: 2px 2px 0 0 #6e5a3a;
+  }
+}
+
+:root[data-theme="pergaminho"] {
+  color-scheme: light;
+  --surface-000: #d8c69c;
+  --surface-100: #eadcb6;
+  --surface-200: #f5ecd3;
+  --ink: #2a2116;
+  --ink-muted: #5a4a32;
+  --line: #b39f76;
+  --line-strong: #6e5a3a;
+  --moss: #4a6420;
+  --on-moss: #f5ecd3;
+  --moss-text: #3f561a;
+  --moss-soft: #d7d9a9;
+  --candle: #8a5606;
+  --on-candle: #f5ecd3;
+  --candle-text: #7e4f05;
+  --candle-soft: #efd7a0;
+  --blood: #9e2f25;
+  --on-blood: #f5ecd3;
+  --blood-text: #8e281f;
+  --blood-soft: #efc6b8;
+  --night: #3d5a70;
+  --night-text: #34506a;
+  --night-soft: #ccd6d6;
+  --focus: #7e4f05;
+  --shadow-pixel: 4px 4px 0 0 #6e5a3a;
+  --shadow-press: 2px 2px 0 0 #6e5a3a;
+}
