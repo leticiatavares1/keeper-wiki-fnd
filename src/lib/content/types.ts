@@ -11,32 +11,20 @@ export interface Game {
 	blurb: string;
 	/** Jogo sem conteúdo ainda: aparece como "em breve" e não gera rotas. */
 	soon?: boolean;
-}
-
-export interface Ingredient {
-	name: string;
-	qty: number;
-}
-
-export interface Recipe {
-	id: string;
-	station: string;
-	/** Tempo de fabricação, já com unidade: "12s", "1 min". */
-	time?: string;
-	ingredients: Ingredient[];
-	result: Ingredient;
-	/** Agrupa a receita na página de receitas. */
-	category: string;
-	/** Nome oficial do resultado em inglês; entra na busca. */
-	en?: string;
-	/** Detalhe curto no cabeçalho: pontos de tecnologia, combustível. */
-	note?: string;
+	/**
+	 * Jogo cujo dado extraído do binário está na API de ../keeper-wiki-bkd.
+	 * Liga as páginas de bancadas, itens e tecnologias, que são geradas no build
+	 * a partir dela. Sem isso, o jogo tem só os artigos escritos à mão.
+	 */
+	apiData?: boolean;
 }
 
 export type CalloutTone = 'nota' | 'dica' | 'perigo';
 
 /**
  * Blocos de um artigo. Texto aceita links em markdown mínimo: [rótulo](/caminho).
+ * Um bloco `recipe` guarda o id da receita na API (`baked_apple`), e o dado dela
+ * é buscado no build — a wiki não repete número de jogo à mão.
  */
 export type Block =
 	| { type: 'p'; text: string }
@@ -73,7 +61,6 @@ export interface GameContent {
 	/** Ordem dos grupos na Sidebar. */
 	groups: string[];
 	articles: Article[];
-	recipes: Recipe[];
 }
 
 export interface NavSection {

@@ -1,34 +1,33 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Infobox from '$lib/components/Infobox.svelte';
-	import Recipe from '$lib/components/Recipe.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	import { filterRecipes, groupByCategory } from '$lib/recipes';
+	import { gamePath } from '$lib/content';
+	import { date, stationName } from '$lib/format';
+	import { filterStations } from '$lib/search';
 
 	let { data } = $props();
 	const content = $derived(data.content);
 
 	let query = $state('');
-	let station = $state('');
 
-	const stations = $derived([...new Set(content.recipes.map((r) => r.station))].sort());
-	const results = $derived(filterRecipes(content.recipes, query, station));
-	const groups = $derived(groupByCategory(results));
-	const perStation = $derived(
-		stations.map(
-			(s) => [s, `×${content.recipes.filter((r) => r.station === s).length}`] as [string, string]
-		)
-	);
-
-	function clear() {
-		query = '';
-		station = '';
-	}
+	const results = $derived(filterStations(data.stations, query));
+	const rows: [string, string][] = $derived([
+		['Itens', String(data.totals.itens)],
+		['Receitas', String(data.totals.receitas)],
+		['Bancadas', String(data.totals.bancadas)],
+		['Tecnologias', String(data.totals.tecnologias)],
+		['Extração', date(data.extractedAt)]
+	]);
 </script>
 
 <svelte:head>
 	<title>Receitas · {content.game.title} · Guarda-covas</title>
-	<meta name="description" content="Receitas de {content.game.title}: ingredientes, quantidades e bancada." />
+	<meta
+		name="description"
+		content="As {data.totals.receitas} receitas de {content.game
+			.title}, separadas pelas {data.totals.bancadas} bancadas que as fabricam."
+	/>
 </svelte:head>
 
 <div class="lp-page">
@@ -40,84 +39,60 @@
 			<p class="lp-lede">Tudo o que se fabrica começa numa bancada. Ache a sua.</p>
 		</header>
 
+		<p>
+			Cada bancada tem a sua página, com o que entra e o que sai de cada receita. Procurando um
+			ingrediente? Vá pela ficha do <a href={gamePath(content, 'itens')}>item</a>: ela lista o que o
+			faz e o que o gasta.
+		</p>
+
 		<form class="filtros" role="search" onsubmit={(e) => e.preventDefault()}>
 			<div class="lp-field">
-				<label for="busca">Item ou ingrediente</label>
+				<label for="busca">Bancada</label>
 				<input
 					id="busca"
 					class="lp-input"
 					type="search"
-					placeholder="Ex.: pregos, tábua, nails"
+					placeholder="Ex.: fogueira, bigorna, alchemy"
 					autocomplete="off"
 					bind:value={query}
 				/>
 			</div>
-			<div class="lp-field">
-				<label for="bancada">Bancada</label>
-				<select id="bancada" class="lp-select" bind:value={station}>
-					<option value="">Todas</option>
-					{#each stations as s (s)}<option value={s}>{s}</option>{/each}
-				</select>
-			</div>
 		</form>
 
 		<p class="lp-label" aria-live="polite">
-			{results.length === 1 ? '1 receita' : `${results.length} receitas`}
+			{results.length === 1 ? '1 bancada' : `${results.length} bancadas`}
 		</p>
 
 		{#if results.length === 0}
 			<div class="lp-empty">
-				<p>Nenhuma receita com esse nome nessa bancada. Limpe a busca e tente outro termo.</p>
-				<button type="button" class="lp-btn lp-btn-quiet" onclick={clear}>Limpar busca</button>
+				<p>Nenhuma bancada com esse nome. Tente parte da palavra, ou o nome em inglês.</p>
+				<button type="button" class="lp-btn" onclick={() => (query = '')}>Limpar busca</button>
 			</div>
 		{:else}
-			{#each groups as g (g.category)}
-				<section class="wiki-section">
-					<h2 class="lp-h2">{g.category}</h2>
-					<div class="wiki-stack">
-						{#each g.recipes as recipe (recipe.id)}<Recipe {recipe} />{/each}
-					</div>
-				</section>
-			{/each}
+			<ul class="wiki-index">
+				{#each results as station (station.id)}
+					<li>
+						<a href="{gamePath(content, 'receitas')}/{station.id}">{stationName(station)}</a>
+						<p>
+							{station.receitas === 1 ? '1 receita' : `${station.receitas} receitas`}
+							{#if station.en && station.en !== stationName(station)}· {station.en}{/if}
+						</p>
+					</li>
+				{/each}
+			</ul>
 		{/if}
 
 		<p class="lp-body-sm lp-muted">
-			Os nomes em português são tradução desta wiki. A busca aceita também o nome em inglês.
+			Os nomes vêm da tradução oficial do jogo. A busca aceita também o nome em inglês.
 		</p>
 	</article>
 
-	<div class="bancadas">
-		<Infobox title="Bancadas" subtitle="Receitas por bancada" rows={perStation} />
-	</div>
+	<Infobox title="Dado do jogo" subtitle="Extraído do próprio Graveyard Keeper" {rows} />
 </div>
 
 <style>
 	.filtros {
 		display: grid;
-		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 		gap: var(--space-4);
-	}
-	/* Wrapper transparente: a Infobox continua ocupando a coluna da direita do .lp-page. */
-	.bancadas {
-		display: contents;
-	}
-	.bancadas :global(.lp-infobox) {
-		grid-column: 3;
-		grid-row: 1;
-	}
-	@media (max-width: 1100px) {
-		.bancadas :global(.lp-infobox) {
-			grid-column: 2;
-			width: 100%;
-		}
-	}
-	/* No celular a ficha repete o filtro de bancada e empurra as receitas para baixo. */
-	@media (max-width: 720px) {
-		.filtros {
-			grid-template-columns: minmax(0, 1fr);
-		}
-		.bancadas {
-			display: none;
-		}
 	}
 </style>

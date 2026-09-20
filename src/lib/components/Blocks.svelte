@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { Block, Recipe as RecipeData } from '$lib/content/types';
+	import type { RecipeCard } from '$lib/api/types';
+	import type { Block } from '$lib/content/types';
 	import Callout from './Callout.svelte';
 	import Recipe from './Recipe.svelte';
 	import RichText from './RichText.svelte';
 
-	let { blocks, recipes }: { blocks: Block[]; recipes: RecipeData[] } = $props();
-	const byId = $derived(new Map(recipes.map((r) => [r.id, r])));
+	// As receitas vêm da API, buscadas no build pelo load da página.
+	let { blocks, recipes }: { blocks: Block[]; recipes: Record<string, RecipeCard> } = $props();
 </script>
 
 {#each blocks as block, i (i)}
@@ -18,7 +19,7 @@
 	{:else if block.type === 'callout'}
 		<Callout tone={block.tone} title={block.title}><RichText text={block.text} /></Callout>
 	{:else if block.type === 'recipe'}
-		{@const recipe = byId.get(block.id)}
+		{@const recipe = recipes[block.id]}
 		{#if recipe}<Recipe {recipe} />{/if}
 	{:else if block.type === 'table'}
 		<div class="wiki-table-wrap">

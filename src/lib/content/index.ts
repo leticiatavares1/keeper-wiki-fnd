@@ -20,20 +20,30 @@ export function getContent(id: string): GameContent | undefined {
 
 export const availableGameIds = contents.map((c) => c.game.id);
 
+/** Jogos cujo dado extraído está na API: só eles ganham bancadas, itens e tecnologias. */
+export const gameIdsWithData = contents.filter((c) => c.game.apiData).map((c) => c.game.id);
+
 export function gamePath(content: GameContent, slug?: string): string {
 	return slug ? `/${content.game.id}/${slug}` : `/${content.game.id}`;
 }
 
-/** Sidebar do jogo: início, artigos por grupo (na ordem de `groups`) e receitas. */
+/** Rotas geradas a partir da API. Nenhum artigo pode usar esses slugs. */
+export const dataSlugs = ['receitas', 'itens', 'tecnologias'] as const;
+
+/** Sidebar do jogo: início, páginas do dado do jogo e artigos por grupo. */
 export function navFor(content: GameContent): NavSection[] {
 	const base = gamePath(content);
+	const dados = content.game.apiData
+		? [
+				{ label: 'Receitas', href: `${base}/receitas` },
+				{ label: 'Itens', href: `${base}/itens` },
+				{ label: 'Tecnologias', href: `${base}/tecnologias` }
+			]
+		: [];
 	return [
 		{
 			title: content.game.short,
-			items: [
-				{ label: 'Início', href: base },
-				{ label: 'Receitas', href: `${base}/receitas` }
-			]
+			items: [{ label: 'Início', href: base }, ...dados]
 		},
 		...content.groups.map((group) => ({
 			title: group,

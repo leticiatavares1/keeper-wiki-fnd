@@ -31,7 +31,7 @@
 		{#each article.sections as section (section.heading)}
 			<section class="wiki-section">
 				<h2 class="lp-h2">{section.heading}</h2>
-				<Blocks blocks={section.blocks} recipes={data.content.recipes} />
+				<Blocks blocks={section.blocks} recipes={data.recipes} />
 			</section>
 		{/each}
 	</article>

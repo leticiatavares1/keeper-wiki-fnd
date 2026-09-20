@@ -1,7 +1,13 @@
 services:
   # Site de produção (build estático + nginx): http://localhost:8080
+  # network: host porque o prerender busca a API em 127.0.0.1:8000 durante o
+  # build. Para outra máquina: docker compose build --build-arg API_URL=… web
   web:
-    build: .
+    build:
+      context: .
+      network: host
+      args:
+        API_URL: ${API_URL:-http://127.0.0.1:8000}
     ports:
       - "8080:80"
 

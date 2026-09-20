@@ -3,16 +3,30 @@
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { gamePath } from '$lib/content';
+	import { date } from '$lib/format';
 
 	let { data } = $props();
 	const content = $derived(data.content);
+	const totals = $derived(data.totals);
 	const byGroup = $derived(
 		content.groups.map((group) => ({
 			group,
 			articles: content.articles.filter((a) => a.group === group)
 		}))
 	);
-	const stations = $derived(new Set(content.recipes.map((r) => r.station)).size);
+	const rows: [string, string][] = $derived([
+		['Estúdio', 'Lazy Bear Games'],
+		['Lançamento', '2018'],
+		['Artigos', String(content.articles.length)],
+		...(totals
+			? ([
+					['Itens', String(totals.itens)],
+					['Receitas', String(totals.receitas)],
+					['Bancadas', String(totals.bancadas)],
+					['Tecnologias', String(totals.tecnologias)]
+				] as [string, string][])
+			: [])
+	]);
 </script>
 
 <svelte:head>
@@ -37,10 +51,33 @@
 			<p>
 				Novo no jogo? Leia na ordem: <a href={gamePath(content, 'primeiros-dias')}>primeiros dias</a>,
 				<a href={gamePath(content, 'semana')}>dias da semana</a> e
-				<a href={gamePath(content, 'corpos-e-autopsia')}>corpos e autópsia</a>. Procurando o que fabricar?
-				Abra as <a href={gamePath(content, 'receitas')}>receitas</a>.
+				<a href={gamePath(content, 'corpos-e-autopsia')}>corpos e autópsia</a>.
 			</p>
 		</section>
+
+		{#if totals}
+			<section class="wiki-section">
+				<h2 class="lp-h2">O dado do jogo</h2>
+				<p>
+					Receitas, itens e tecnologias saem do próprio jogo, não de anotação de jogador. Procure
+					pela bancada, pelo item ou pela pesquisa.
+				</p>
+				<ul class="wiki-index">
+					<li>
+						<a href={gamePath(content, 'receitas')}>Receitas por bancada</a>
+						<p>{totals.receitas} receitas em {totals.bancadas} bancadas, com o que entra e o que sai.</p>
+					</li>
+					<li>
+						<a href={gamePath(content, 'itens')}>Itens</a>
+						<p>{totals.itens} itens: preço, pilha e todas as receitas que fazem e que gastam cada um.</p>
+					</li>
+					<li>
+						<a href={gamePath(content, 'tecnologias')}>Tecnologias</a>
+						<p>{totals.tecnologias} pesquisas, com custo em pontos e o que cada uma libera.</p>
+					</li>
+				</ul>
+			</section>
+		{/if}
 
 		{#each byGroup as { group, articles } (group)}
 			<section class="wiki-section">
@@ -55,17 +92,13 @@
 				</ul>
 			</section>
 		{/each}
+
+		{#if data.extractedAt}
+			<p class="lp-body-sm lp-muted">
+				Dado extraído do jogo em {date(data.extractedAt)}.
+			</p>
+		{/if}
 	</article>
 
-	<Infobox
-		title={content.game.title}
-		subtitle="Simulação de cemitério medieval"
-		rows={[
-			['Estúdio', 'Lazy Bear Games'],
-			['Editora', 'tinyBuild'],
-			['Lançamento', '2018'],
-			['Artigos', String(content.articles.length)],
-			['Receitas', `${content.recipes.length} em ${stations} bancadas`]
-		]}
-	/>
+	<Infobox title={content.game.title} subtitle="Simulação de cemitério medieval" {rows} />
 </div>

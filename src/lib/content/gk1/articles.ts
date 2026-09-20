@@ -145,8 +145,8 @@ export const articles: Article[] = [
 							['Tigela de chucrute', 'Fabrique', '+30']
 						]
 					},
-					{ type: 'recipe', id: 'maca-assada' },
-					{ type: 'recipe', id: 'cogumelos-assados' }
+					{ type: 'recipe', id: 'baked_apple' },
+					{ type: 'recipe', id: 'baked_kebab_7' }
 				]
 			}
 		]
@@ -247,7 +247,7 @@ export const articles: Article[] = [
 					},
 					{
 						type: 'p',
-						text: 'Gaste os pontos na árvore de tecnologias. Uma tecnologia pode pedir mais de uma cor. Os ramos são anatomia e alquimia, teologia, escrita de livros, agricultura e natureza, ferraria, construção e culinária.'
+						text: 'Gaste os pontos na [árvore de tecnologias](/gk1/tecnologias). Uma tecnologia pode pedir mais de uma cor. Os sete ramos são anatomia e alquimia, teologia, espiritualismo, escrita de livros, agricultura e natureza, metalurgia e construção.'
 					}
 				]
 			},
@@ -288,8 +288,8 @@ export const articles: Article[] = [
 							'Coma bolo ou torta de uva antes de estudar: +1 azul por estudo enquanto durar o efeito.'
 						]
 					},
-					{ type: 'recipe', id: 'cerca-de-pedra' },
-					{ type: 'recipe', id: 'corda-de-canhamo' }
+					{ type: 'recipe', id: 'grave_bot_stn_1' },
+					{ type: 'recipe', id: 'rope_hemp' }
 				]
 			}
 		]
@@ -344,8 +344,8 @@ export const articles: Article[] = [
 							['Cerca de túmulo de pedra', 'Cerca', '+2']
 						]
 					},
-					{ type: 'recipe', id: 'cruz-de-madeira' },
-					{ type: 'recipe', id: 'cerca-de-madeira' }
+					{ type: 'recipe', id: 'grave_top_wd_cross_1' },
+					{ type: 'recipe', id: 'grave_bot_wd_1' }
 				]
 			},
 			{
