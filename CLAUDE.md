@@ -59,6 +59,10 @@ Toda interface (página, componente, layout, estado de UI ou microcopy) deve ser
   - `Recipe.note` no cabeçalho da receita.
 - Há dois temas: **Noite** (padrão) e **Pergaminho** (`data-theme="pergaminho"`). O script inline em `src/app.html` aplica o tema salvo em `localStorage` antes do primeiro paint. Toda UI precisa funcionar nos dois temas e em 360px, 720px e ≥1100px.
 
+## Backend: sempre use a skill `backend`
+
+O dado do jogo vem da API em `../keeper-wiki-bkd/`, que é outro repositório. Quando faltar rota, campo, filtro ou formato de resposta, carregue a skill do projeto `.claude/skills/backend`: ela abre um agent que implementa lá. **Nunca edite o `../keeper-wiki-bkd/` a partir daqui, e nunca invente o dado no front para contornar a falta.**
+
 ## Commits
 
 Use a skill do projeto `.claude/skills/commit` para qualquer commit: Conventional Commits (Angular) em pt-BR, com os termos técnicos em inglês. **Nunca coloque o Claude como coautor nem cite IA na mensagem** (sem `Co-Authored-By: Claude`, sem "Generated with Claude Code").
