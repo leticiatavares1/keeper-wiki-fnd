@@ -25,6 +25,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# ── Arte do jogo, espelhada da API pelo scripts/espelha-icones.js ──
+/static/icones/
+
 # ── Svelte / SvelteKit / Vite ─────────────────────
 .svelte-kit/
 /build/

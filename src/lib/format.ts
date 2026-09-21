@@ -2,7 +2,7 @@
 // `stat`, quantidade com ×, tempo em s/min. O que o jogo guarda como fórmula
 // aparece como fórmula — não se arredonda o que não é número.
 
-import type { ItemCard, RecipeCard, Ref, Station, StationRef, Tech, TechRef } from '$lib/api/types';
+import type { Item, RecipeCard, Ref, Station, StationRef, Tech, TechRef } from '$lib/api/types';
 
 const nf = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
 
@@ -14,9 +14,44 @@ const CORES: [string, string][] = [
 	['gratitude_points', 'Gratidão']
 ];
 
-/** Nem todo item tem tradução oficial: 75 dos 770 caem no nome em inglês. */
-export function itemName(item: ItemCard): string {
+/** As três estrelas de qualidade do jogo, na ordem em que o jogador as sobe. */
+const ESTRELAS = ['bronze', 'prata', 'ouro'];
+
+/** Recursos que um item devolve ao ser usado, na ordem em que a ficha mostra. */
+const RECURSOS: [string, string][] = [
+	['energy', 'energia'],
+	['hp', 'saúde'],
+	['r', 'ponto vermelho'],
+	['g', 'ponto verde'],
+	['b', 'ponto azul']
+];
+
+/** Nem todo item tem tradução oficial: 75 dos 770 caem no nome em inglês.
+ *  Serve para o item, para o recorte da listagem e para o grupo de níveis. */
+export function itemName(item: Pick<Item, 'id' | 'pt' | 'en'>): string {
 	return item.pt ?? item.en ?? item.id;
+}
+
+/** O PNG do sprite, espelhado da API para `static/icones` no build. */
+export function spritePath(icone: string): string {
+	return `/icones/${icone}.png`;
+}
+
+/** "Estrela de prata". O jogo não nomeia o nível; a cor do sprite é que diz. */
+export function starLabel(estrela: number): string {
+	return `Estrela de ${ESTRELAS[estrela - 1] ?? estrela}`;
+}
+
+/** Para onde o nome de um item leva. Nível de qualidade não tem página própria:
+ *  os três "Abóbora" são uma ficha só, e o nível é uma âncora dentro dela. */
+export function itemPath(game: string, ref: Pick<Ref, 'ref_id' | 'grupo' | 'estrela'>): string {
+	const ficha = `/${game}/itens/${ref.grupo ?? ref.ref_id}`;
+	return ref.grupo && ref.estrela ? `${ficha}#${levelAnchor(ref.estrela)}` : ficha;
+}
+
+/** Âncora do nível dentro da ficha do grupo. */
+export function levelAnchor(estrela: number | null): string {
+	return `nivel-${estrela ?? 0}`;
 }
 
 export function refName(ref: Ref): string {
@@ -73,6 +108,19 @@ export function points(mapa: Record<string, number | null>): [string, number][] 
 		([chave, valor]) => valor && !CORES.some(([c]) => c === chave)
 	) as [string, number][];
 	return [...conhecidas, ...resto];
+}
+
+/** "+24 de energia · −20 de saúde" — o que o item faz quando o jogador o usa.
+ *  Negativo é perda: infusão dá energia e cobra saúde. Recurso que o jogo tem e
+ *  a wiki não conhece entra com a chave crua, em vez de sumir. */
+export function onUse(mapa: Record<string, number>): string {
+	const conhecidos = RECURSOS.filter(([chave]) => mapa[chave]);
+	const resto = Object.keys(mapa)
+		.filter((chave) => mapa[chave] && !RECURSOS.some(([c]) => c === chave))
+		.map((chave) => [chave, chave] as [string, string]);
+	return [...conhecidos, ...resto]
+		.map(([chave, nome]) => `${mapa[chave] > 0 ? '+' : '−'}${nf.format(Math.abs(mapa[chave]))} de ${nome}`)
+		.join(' · ');
 }
 
 /** Receita de objeto do mundo: "Put" constrói, "Remove" demole. */

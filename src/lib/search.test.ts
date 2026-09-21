@@ -9,7 +9,11 @@ const ref = (id: string, pt: string | null, qtd = 1): Ref => ({
 	qtd,
 	qtd_max: null,
 	qtd_expr: null,
-	e_item: true
+	e_item: true,
+	e_grupo: false,
+	grupo: null,
+	icone: null,
+	estrela: null
 });
 
 const recipe = (id: string, saida: Ref, entrada: Ref, estacao = 'Fogueira'): RecipeCard => ({
@@ -35,7 +39,9 @@ const item = (id: string, pt: string | null, en: string | null, tipo: string): I
 	pt,
 	en,
 	tipo,
-	nao_usado: false
+	nao_usado: false,
+	icone: null,
+	niveis: 0
 });
 
 describe('normalize', () => {

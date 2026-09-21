@@ -7,12 +7,15 @@
 
 import { env } from '$env/dynamic/private';
 import type {
+	Group,
+	GroupDetail,
 	ImportInfo,
 	Item,
 	ItemRecipes,
 	List,
 	Recipe,
 	RecipeCard,
+	Ref,
 	Station,
 	Tech
 } from '$lib/api/types';
@@ -68,6 +71,37 @@ function once<T>(chave: string, buscar: () => Promise<T>): Promise<T> {
 	return memo.get(chave) as Promise<T>;
 }
 
+// ── Arte ────────────────────────────────────────────────────────────────────
+// O nome do sprite vem do jogo; o PNG, da API. Nem todo nome tem arte: 127
+// itens fora de uso e 4 em uso (Hidromel, Pulmões) não têm sprite com o nome
+// que o jogo monta — no jogo também não têm. O ícone desses é apagado aqui,
+// uma vez só, para a tela mostrar o vazio em vez de uma imagem quebrada.
+
+/** Nomes de ícone que a API tem para servir. */
+function art(): Promise<Set<string>> {
+	return once('icones', async () => new Set((await get<List<string>>('/icones')).dados));
+}
+
+function withArt<T extends { icone: string | null }>(alvo: T, arte: Set<string>): T {
+	return alvo.icone && arte.has(alvo.icone) ? alvo : { ...alvo, icone: null };
+}
+
+async function itemArt<T extends { icone: string | null }>(alvo: T): Promise<T> {
+	return withArt(alvo, await art());
+}
+
+/** Mesma limpeza nas três pontas de uma receita. */
+async function recipeArt(r: Recipe): Promise<Recipe> {
+	const arte = await art();
+	const refs = (lista: Ref[]) => lista.map((ref) => withArt(ref, arte));
+	return {
+		...r,
+		entradas: refs(r.entradas),
+		entradas_da_estacao: refs(r.entradas_da_estacao),
+		saidas: refs(r.saidas)
+	};
+}
+
 /** De qual extração veio o dado que está no ar. */
 export function importInfo(): Promise<ImportInfo> {
 	return once('meta', () => get<ImportInfo>('/meta'));
@@ -81,9 +115,25 @@ export function stations(): Promise<Station[]> {
 /** A wiki gera página para todo item, inclusive os marcados como não usados:
  *  oito deles ainda aparecem em receita, e link quebrado derruba o prerender. */
 export function items(incluirNaoUsados = false): Promise<Item[]> {
-	return once(`itens:${incluirNaoUsados}`, () =>
-		getAll<Item>('/itens', { incluir_nao_usados: incluirNaoUsados || undefined })
-	);
+	return once(`itens:${incluirNaoUsados}`, async () => {
+		const todos = await getAll<Item>('/itens', {
+			incluir_nao_usados: incluirNaoUsados || undefined
+		});
+		const arte = await art();
+		return todos.map((i) => withArt(i, arte));
+	});
+}
+
+/** Os 83 itens que existem em mais de um nível de qualidade. A listagem de
+ *  itens mostra o grupo no lugar dos níveis: "Abóbora" uma vez, não três. */
+export function groups(incluirNaoUsados = false): Promise<Group[]> {
+	return once(`grupos:${incluirNaoUsados}`, async () => {
+		const todos = await getAll<Group>('/grupos', {
+			incluir_nao_usados: incluirNaoUsados || undefined
+		});
+		const arte = await art();
+		return todos.map((g) => withArt(g, arte));
+	});
 }
 
 export function techs(): Promise<Tech[]> {
@@ -116,18 +166,36 @@ export function recipeCount(): Promise<number> {
 	return once('receitas:total', async () => (await get<List<Recipe>>('/receitas', { limite: 1 })).total);
 }
 
-export function item(id: string): Promise<Item> {
-	return get<Item>(`/itens/${encodeURIComponent(id)}`);
+export async function item(id: string): Promise<Item> {
+	return itemArt(await get<Item>(`/itens/${encodeURIComponent(id)}`));
 }
 
-export function itemRecipes(id: string): Promise<ItemRecipes> {
-	return get<ItemRecipes>(`/itens/${encodeURIComponent(id)}/receitas`);
+export async function group(id: string): Promise<GroupDetail> {
+	const g = await get<GroupDetail>(`/grupos/${encodeURIComponent(id)}`);
+	const arte = await art();
+	return { ...withArt(g, arte), itens: g.itens.map((i) => withArt(i, arte)) };
 }
 
-export function stationRecipes(estacao: string): Promise<Recipe[]> {
-	return getAll<Recipe>('/receitas', { estacao });
+export async function itemRecipes(id: string): Promise<ItemRecipes> {
+	return recipesArt(await get<ItemRecipes>(`/itens/${encodeURIComponent(id)}/receitas`));
 }
 
-export function recipe(id: string): Promise<Recipe> {
-	return get<Recipe>(`/receitas/${encodeURIComponent(id)}`);
+/** As receitas do grupo inteiro: as que pedem um nível e as que pedem o grupo. */
+export async function groupRecipes(id: string): Promise<ItemRecipes> {
+	return recipesArt(await get<ItemRecipes>(`/grupos/${encodeURIComponent(id)}/receitas`));
+}
+
+async function recipesArt(r: ItemRecipes): Promise<ItemRecipes> {
+	return {
+		produzem: await Promise.all(r.produzem.map(recipeArt)),
+		consomem: await Promise.all(r.consomem.map(recipeArt))
+	};
+}
+
+export async function stationRecipes(estacao: string): Promise<Recipe[]> {
+	return Promise.all((await getAll<Recipe>('/receitas', { estacao })).map(recipeArt));
+}
+
+export async function recipe(id: string): Promise<Recipe> {
+	return recipeArt(await get<Recipe>(`/receitas/${encodeURIComponent(id)}`));
 }

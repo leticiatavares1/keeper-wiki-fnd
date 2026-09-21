@@ -3,6 +3,7 @@
 	import Badge from '$lib/components/Badge.svelte';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
 	import { filterItems } from '$lib/search';
 
@@ -20,6 +21,7 @@
 	const visiveis = $derived(results.slice(0, mostrar));
 	const rows: [string, string][] = $derived([
 		['Itens no jogo', String(data.usados)],
+		['Com níveis', String(data.comNivel)],
 		['Fora de uso', String(data.items.length - data.usados)],
 		['Tipos', String(data.tipos.length)]
 	]);
@@ -45,7 +47,10 @@
 	<article class="lp-article lp-panel">
 		<header class="wiki-head">
 			<h1 class="lp-h1">Itens</h1>
-			<p class="lp-lede">Ache o item e veja, na ficha dele, o que o faz e o que o gasta.</p>
+			<p class="lp-lede">
+				Ache o item e veja, na ficha dele, o que o faz e o que o gasta. Item que vem em níveis de
+				qualidade aparece uma vez só: os níveis estão na ficha.
+			</p>
 		</header>
 
 		<form class="filtros" role="search" onsubmit={(e) => e.preventDefault()}>
@@ -108,12 +113,16 @@
 			<ul class="wiki-index">
 				{#each visiveis as item (item.id)}
 					<li>
-						<a href="{gamePath(content, 'itens')}/{item.id}">{item.pt ?? item.en ?? item.id}</a>
-						<p>
-							{item.tipo ?? 'Sem tipo'}
-							{#if item.en && item.en !== item.pt}· {item.en}{/if}
-							{#if item.nao_usado}<Badge>Fora de uso</Badge>{/if}
-						</p>
+						<Sprite icone={item.icone} />
+						<div>
+							<a href="{gamePath(content, 'itens')}/{item.id}">{item.pt ?? item.en ?? item.id}</a>
+							<p>
+								{item.tipo ?? 'Sem tipo'}
+								{#if item.en && item.en !== item.pt}· {item.en}{/if}
+								{#if item.niveis}· {item.niveis} níveis de qualidade{/if}
+								{#if item.nao_usado}<Badge>Fora de uso</Badge>{/if}
+							</p>
+						</div>
 					</li>
 				{/each}
 			</ul>
@@ -135,6 +144,16 @@
 </div>
 
 <style>
+	/* Derivado: o índice de artigos ganha a imagem do item na frente do nome. */
+	.wiki-index li {
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-3);
+	}
+	.wiki-index li div {
+		display: grid;
+		gap: var(--space-1);
+	}
 	.filtros {
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);

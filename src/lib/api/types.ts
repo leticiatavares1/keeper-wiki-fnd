@@ -19,8 +19,17 @@ export interface Ref {
 	qtd_max: number | null;
 	/** Fórmula do jogo, quando a quantidade não é um número. */
 	qtd_expr: string | null;
-	/** false quando a referência não é item do jogo (b_faith, book:book_hard…). */
+	/** false quando a referência não é item do jogo (b_faith, money…). */
 	e_item: boolean;
+	/** true quando a referência é um grupo de níveis, e não um item: 164 receitas
+	 *  pedem "Abóbora" (`pumpkin_crop`), não o nível 2 dela. */
+	e_grupo: boolean;
+	/** O grupo do item apontado, quando ele é um nível de qualidade. */
+	grupo: string | null;
+	/** Sprite do item; no grupo, o do nível mais baixo. Nulo quando não há arte. */
+	icone: string | null;
+	/** 1, 2 ou 3 — bronze, prata e ouro. Nulo no grupo e em quem não tem. */
+	estrela: number | null;
 }
 
 export interface StationRef {
@@ -99,10 +108,46 @@ export interface Item {
 	tem_durabilidade: boolean;
 	nao_usado: boolean;
 	tipos_de_produto: string[];
+	/** Nome do sprite do item. Nulo quando o jogo não tem arte com esse nome. */
+	icone: string | null;
+	/** Nível da estrela de qualidade: 1 bronze, 2 prata, 3 ouro. */
+	estrela: number | null;
+	/** Id do grupo de níveis, quando o item é um nível de qualidade de outro. */
+	grupo: string | null;
+	/** O jogador pode usar o item direto do inventário (`can_be_used`). */
+	pode_usar: boolean;
+	/** O que o item devolve ao ser usado, por recurso: `{energy: 24, hp: -20}`.
+	 *  Valor negativo é perda — cogumelo venenoso tira saúde. Vazio na maioria.
+	 *  Em ferramenta (`pode_usar` false) o número é o custo por golpe. */
+	ao_usar: Record<string, number>;
+	/** A parte do efeito que o jogo guarda como fórmula (perk, buff), crua. */
+	ao_usar_expr: string[];
 }
 
-/** O recorte de item que o índice de busca manda para o navegador. */
-export type ItemCard = Pick<Item, 'id' | 'pt' | 'en' | 'tipo' | 'nao_usado'>;
+/** Um item com níveis de qualidade: as três "Abóbora" são um grupo só.
+ *  Nome, ícone e tipo saem do nível mais baixo — o que o jogador vê primeiro. */
+export interface Group {
+	id: string;
+	pt: string | null;
+	en: string | null;
+	icone: string | null;
+	tipo: string | null;
+	nao_usado: boolean;
+	/** Quantos níveis o grupo tem: 2 ou 3. */
+	niveis: number;
+}
+
+/** O grupo com os níveis dentro, na ordem em que o jogador os melhora. */
+export interface GroupDetail extends Group {
+	itens: Item[];
+}
+
+/** O recorte de item que o índice de busca manda para o navegador. Uma entrada
+ *  por item que o jogador reconhece: o grupo entra no lugar dos seus níveis. */
+export type ItemCard = Pick<Item, 'id' | 'pt' | 'en' | 'tipo' | 'nao_usado' | 'icone'> & {
+	/** 0 no item comum; 2 ou 3 no grupo, que vale por todos os seus níveis. */
+	niveis: number;
+};
 
 export interface Station {
 	id: string;
