@@ -58,7 +58,7 @@ export const articles: Article[] = [
 							'Enterre corpos e venda o certificado de sepultamento a Horadric, na taverna: 1 prata e 50 cobre cada. Veja [corpos e autópsia](/gk1/corpos-e-autopsia).',
 							'Plante cedo. Cenoura paga as entregas de corpos, serve de comida e vende. Trigo e cânhamo viram ingredientes.',
 							'Pesque.',
-							'Faça um sermão todo dia de Orgulho, quando tiver a habilidade de pregador. Veja [nota do cemitério](/gk1/cemiterio).'
+							'Faça um sermão todo dia de Orgulho (roxo), quando tiver a habilidade de pregador. Veja [nota do cemitério](/gk1/cemiterio).'
 						]
 					}
 				]
@@ -163,7 +163,7 @@ export const articles: Article[] = [
 			rows: [
 				['Dias', '6'],
 				['Visitantes', 'Da aurora ao anoitecer'],
-				['Burro', 'Todo dia, menos Orgulho']
+				['Burro', 'Todo dia, menos Orgulho (roxo)']
 			]
 		},
 		sections: [
@@ -172,18 +172,18 @@ export const articles: Article[] = [
 				blocks: [
 					{
 						type: 'p',
-						text: 'O símbolo do dia aparece no canto da tela. Cada dia tem um visitante que só vem nele: chega na aurora e vai embora ao anoitecer. Os dias estão na ordem do jogo.'
+						text: 'O símbolo do dia aparece no canto da tela, com um brilho de cor própria. Cada dia tem um visitante que só vem nele: chega na aurora e vai embora ao anoitecer. Os dias estão na ordem do jogo.'
 					},
 					{
 						type: 'table',
-						head: ['Dia', 'Símbolo', 'Quem', 'Onde'],
+						head: ['Dia', 'Símbolo', 'Cor', 'Quem', 'Onde'],
 						rows: [
-							['Orgulho', 'Sol', 'Bispo', 'Igreja e cemitério'],
-							['Luxúria', 'Vênus', 'Sra. Charm', 'Taverna The Dead Horse'],
-							['Gula', 'Júpiter', 'Mercador', 'Vila, ao sul da taverna'],
-							['Inveja', 'Mercúrio', 'Snake', 'Porão da igreja velha'],
-							['Ira', 'Marte', 'Inquisidor', 'Colina da bruxa'],
-							['Preguiça', 'Lua', 'Astrólogo', 'Farol']
+							['Orgulho', 'Sol', 'Roxo', 'Bispo', 'Igreja e cemitério'],
+							['Luxúria', 'Vênus', 'Vermelho', 'Sra. Charm', 'Taverna The Dead Horse'],
+							['Gula', 'Júpiter', 'Laranja', 'Mercador', 'Vila, ao sul da taverna'],
+							['Inveja', 'Mercúrio', 'Verde', 'Snake', 'Porão da igreja velha'],
+							['Ira', 'Marte', 'Vinho', 'Inquisidor', 'Colina da bruxa'],
+							['Preguiça', 'Lua', 'Azul', 'Astrólogo', 'Farol']
 						]
 					},
 					{
@@ -201,7 +201,7 @@ export const articles: Article[] = [
 						items: [
 							'Horadric cuida da taverna The Dead Horse e compra certificados de sepultamento.',
 							'Gerry é uma caveira falante que mora no necrotério.',
-							'Snake aparece toda noite no começo da história. Depois que a porta da chave é aberta, só em Inveja.'
+							'Snake aparece toda noite no começo da história. Depois que a porta da chave é aberta, só em Inveja (verde).'
 						]
 					}
 				]
@@ -211,7 +211,7 @@ export const articles: Article[] = [
 				blocks: [
 					{
 						type: 'p',
-						text: 'Muitas missões só avançam falando com um visitante. Perdeu o dia, espera a semana toda. O sermão também só acontece em Orgulho. Veja [nota do cemitério](/gk1/cemiterio).'
+						text: 'Muitas missões só avançam falando com um visitante. Perdeu o dia, espera a semana toda. O sermão também só acontece em Orgulho (roxo). Veja [nota do cemitério](/gk1/cemiterio).'
 					}
 				]
 			}
@@ -284,7 +284,7 @@ export const articles: Article[] = [
 						items: [
 							'Fabrique corda de cânhamo, tijolo de pedra polido, peças de aço ou frasco cônico: +1 azul cada.',
 							'Fabrique cerca de túmulo de pedra: +5 azul e +2 vermelho.',
-							'Compre livros de tecnologia do astrólogo, em Preguiça: 25 pontos o comum, 50 o ótimo.',
+							'Compre livros de tecnologia do astrólogo, em Preguiça (azul): 25 pontos o comum, 50 o ótimo.',
 							'Coma bolo ou torta de uva antes de estudar: +1 azul por estudo enquanto durar o efeito.'
 						]
 					},
@@ -368,7 +368,7 @@ export const articles: Article[] = [
 				blocks: [
 					{
 						type: 'p',
-						text: 'Fale com o bispo em Orgulho com a nota do cemitério em 5 ou mais para ganhar a habilidade de pregador. Depois, faça o sermão todo Orgulho.'
+						text: 'Fale com o bispo em Orgulho (roxo) com a nota do cemitério em 5 ou mais para ganhar a habilidade de pregador. Depois, faça o sermão todo Orgulho (roxo).'
 					},
 					{
 						type: 'list',
@@ -407,7 +407,7 @@ export const articles: Article[] = [
 				blocks: [
 					{
 						type: 'p',
-						text: 'O burro deixa o corpo na estrada em frente ao necrotério. Antes da caixa de cenouras, ele vem mais ou menos a cada 2 dias. Depois que a igreja reabre, pague 5 cenouras por corpo, adiantado, na caixa dele. Aí ele vem todo dia, menos em Orgulho.'
+						text: 'O burro deixa o corpo na estrada em frente ao necrotério. Antes da caixa de cenouras, ele vem mais ou menos a cada 2 dias. Depois que a igreja reabre, pague 5 cenouras por corpo, adiantado, na caixa dele. Aí ele vem todo dia, menos em Orgulho (roxo).'
 					},
 					{
 						type: 'p',
