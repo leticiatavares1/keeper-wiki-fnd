@@ -50,6 +50,7 @@ Outros comandos:
 npm run check        # svelte-check (tipos)
 npm test             # vitest (todos os testes)
 npm run build        # gera o site estático em build/ (~1.400 páginas)
+                     # no Windows falha: há id de item com ":" — use o Docker
 npm run preview      # serve o build localmente
 ```
 
@@ -85,7 +86,9 @@ src/
         │   └── [bancada]/               # receitas de uma bancada
         ├── itens/                       # busca de itens
         │   └── [id]/                    # ficha do item
-        └── tecnologias/                 # árvore de pesquisa
+        ├── tecnologias/                 # árvore de pesquisa
+        └── dlc/                         # índice das DLCs
+            └── [dlc]/                   # o que uma DLC traz
 ```
 
 As rotas são genéricas por jogo, então nada supõe que exista só um jogo. Os
@@ -93,6 +96,16 @@ As rotas são genéricas por jogo, então nada supõe que exista só um jogo. Os
 da API buscam no `+page.server.ts` — que o SvelteKit nunca manda para o
 navegador. Só os jogos com `Game.apiData` ganham bancadas, itens e tecnologias:
 a API serve o GK1.
+
+### DLCs
+
+A API marca de qual DLC é cada tecnologia, receita, bancada e item (campo
+`dlc`) e lista as DLCs em `/dlcs`. O jogo só marca parte das tecnologias; o
+resto é deduzido do dado, com a regra documentada no `../keeper-wiki-bkd`. A
+wiki separa Stranger Sins, Game of Crone e Better Save Soul na barra do site,
+na Sidebar e numa página por DLC, e os índices de receitas, itens e
+tecnologias ganham o filtro "Conteúdo". Breaking Dead, a dos zumbis, virou
+atualização gratuita e conta como jogo base (`format.dlcOf()`).
 
 ## Conteúdo
 
@@ -135,10 +148,11 @@ HTML, sem markdown completo. O parser está em `src/lib/richtext.ts`.
 
 - um link interno apontar para uma rota que não existe;
 - houver slugs repetidos, ou um artigo usar um slug reservado (`receitas`,
-  `itens`, `tecnologias`);
+  `itens`, `tecnologias`, `dlc`);
 - um artigo estiver num grupo que não existe em `groups`;
 - um artigo tiver mais de 2 callouts ou 3 selos;
-- uma seção da Sidebar tiver mais de 6 itens.
+- uma seção da Sidebar tiver mais de 6 itens;
+- a seção DLCs da Sidebar deixar de fora uma DLC, ou incluir Breaking Dead.
 
 O id de receita de um bloco não é conferido no teste, e sim no build: ele busca
 a receita na API e quebra se ela não existir.

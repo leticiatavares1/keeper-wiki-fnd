@@ -24,11 +24,13 @@ npm run check                        # svelte-check (tipos)
 npm test                             # vitest (todos os testes)
 npx vitest run src/lib/search.test.ts    # um arquivo de teste
 npx vitest run -t "ignora acento"        # testes pelo nome
-npm run build                        # gera o site estático em build/ (~1.180 páginas + 706 ícones)
+npm run build                        # gera o site estático em build/ (~1.180 páginas + 706 ícones); no Windows falha, veja abaixo
 
 docker compose up -d --build web     # produção (nginx) em :8080
 docker compose --profile dev up dev  # desenvolvimento em container, :5173
 ```
+
+**No Windows, `npm run build` local falha** com `ENOENT ... mkdir ...\itens\snack:grated_beetroot`: há ids de item com `:`, que o Windows não aceita em nome de pasta. Gere o site pelo Docker (`docker compose up -d --build web`), que builda em Linux.
 
 `API_URL` muda o endereço da API no build (padrão `http://127.0.0.1:8000`). O build do container `web` roda com `network: host` justamente para alcançar a API da máquina.
 
@@ -55,6 +57,7 @@ São duas fontes, e elas não se misturam: **artigo é escrito à mão, dado de 
 - **Imagem e estrela.** Todo item tem `icone`, o nome do sprite no jogo, e o PNG vem da API (`/icones`). O `scripts/espelha-icones.js` baixa tudo para `static/icones/` no `predev`/`prebuild`; a pasta fica fora do git, porque arte é asset do jogo. Ícone sem PNG — quatro itens em uso não têm sprite no jogo — chega como `null` do `$lib/server/api`, e a tela mostra o vazio em vez de imagem quebrada. A estrela de qualidade é um segundo sprite (`item_star_1..3`), desenhado por cima pelo `components/Sprite.svelte`.
 - **O que o item faz ao ser usado** vem em `pode_usar`, `ao_usar` (`{energy: 24, hp: -20}`) e `ao_usar_expr`. É o que responde "para que serve?" na ficha de comida, que não é ingrediente de receita nenhuma. `format.onUse()` escreve o sinal: negativo é perda. Só mostre quando `pode_usar` for true — em ferramenta o mesmo campo guarda o custo de energia por golpe, que é outra coisa.
 - **Item com níveis de qualidade é um item só.** As três "Abóbora" (`pumpkin_crop:1/2/3`) são um grupo: a listagem mostra o grupo, e os níveis moram na ficha dele. `Ref.e_grupo` marca a ponta de receita que pede o grupo em vez do nível — são 164 receitas —, e `format.itemPath()` é quem decide o link: o nível vira âncora (`#nivel-2`) na ficha do grupo, que é a única página que existe.
+- **DLC vem da API, e a wiki só decide o que é jogo base.** Todo registro (tecnologia, receita, bancada, item, grupo) traz `dlc`: `breaking_dead`, `stranger_sins`, `game_of_crone`, `better_save_soul` ou `null`. O jogo só marca parte das tecnologias; o resto a API deduz (regra no README do `../keeper-wiki-bkd`), e na dúvida fica `null`. `GET /dlcs` lista as quatro com as contagens. Breaking Dead virou atualização gratuita e a wiki a conta como jogo base: essa decisão mora só em `format.dlcOf()`/`isSeparateDlc()` — não compare `dlc` direto na tela. O filtro "Conteúdo" dos índices é `search.matchesDlc()`.
 - `src/lib/search.ts` tem a busca sem acento (`normalize`, no mesmo espírito do `gk.normaliza()` do banco) e os filtros de item, receita, bancada e tecnologia. Tudo client-side, sobre o dado já embutido na página.
 
 ### Rotas
@@ -70,8 +73,10 @@ Todas genéricas por jogo, todas pré-renderizadas; os `entries()` dizem ao prer
 | `/[game]/itens` | busca nos itens |
 | `/[game]/itens/[id]` | ficha do item: níveis de qualidade, o que o faz e o que o gasta (998 páginas) |
 | `/[game]/tecnologias` | árvore de pesquisa por ramo |
+| `/[game]/dlc` | índice das DLCs |
+| `/[game]/dlc/[dlc]` | bancadas, itens e tecnologias de uma DLC (`stranger-sins`, `game-of-crone`, `better-save-soul`) |
 
-`[game]/+layout.ts` carrega o conteúdo e a Sidebar (`navFor`). Nenhum artigo pode usar os slugs de `dataSlugs` (`receitas`, `itens`, `tecnologias`).
+`[game]/+layout.server.ts` busca as DLCs (`/dlcs`) no build, e `[game]/+layout.ts` junta o conteúdo e monta a Sidebar (`navFor(content, dlcs)`), que ganha a seção DLCs. A barra do site (`routes/+layout.svelte`) lê o mesmo `page.data` para o seletor "Jogo base · DLCs". Nenhum artigo pode usar os slugs de `dataSlugs` (`receitas`, `itens`, `tecnologias`, `dlc`).
 
 A ficha existe para **todo** item, inclusive os marcados como `nao_usado`: oito deles ainda aparecem em receita, e link quebrado derruba o prerender. O índice de itens esconde esses, atrás de uma caixa de seleção. Nível de qualidade não tem ficha própria — quem tem é o grupo —, então `[id]` recebe id de item ou id de grupo, e o `+page.server.ts` decide qual buscar. URL velha de nível (`/gk1/itens/pumpkin_crop:1`) não morre em 404: o `docker/nginx.conf` redireciona para a âncora do nível na ficha do grupo, e serve o HTML com `no-cache` para que uma aba aberta antes do build não clique em página que não existe mais.
 
@@ -79,7 +84,8 @@ A ficha existe para **todo** item, inclusive os marcados como `nao_usado`: oito 
   - links internos apontam para rotas que existem;
   - slugs são únicos e nenhum usa slug reservado;
   - cada artigo tem no máximo 2 callouts e 3 selos;
-  - cada seção da Sidebar tem até 6 itens.
+  - cada seção da Sidebar tem até 6 itens;
+  - a seção DLCs da Sidebar lista as DLCs separadas e deixa Breaking Dead de fora.
 
   Rode `npm test` depois de editar qualquer conteúdo. O id de receita de um bloco não é conferido aqui — quem confere é o build, que busca a receita na API.
 
@@ -97,7 +103,7 @@ Toda interface (página, componente, layout, estado de UI ou microcopy) deve ser
 - `src/lib/styles/tokens.css` e `components.css` são cópias de `references/` da skill. Não edite essas cópias: atualize a skill e copie de novo. Estilos do site vão em `app.css` ou no `<style>` do componente, sempre com `var(--…)`.
 - Os componentes Svelte em `src/lib/components/` (`Badge`, `Callout`, `Recipe`, `Infobox`, `Sidebar`) só envolvem as classes oficiais `lp-*`.
 - Padrões derivados, que não existem no design system, estão marcados com o comentário "derivado". São eles:
-  - a barra do site;
+  - a barra do site, com o seletor "Jogo base · DLCs" (`.site-tabs`);
   - o índice de artigos (`.wiki-index`);
   - a Sidebar recolhível no celular;
   - a nota no rodapé do card de receita (combustível da bancada, pontos, pesquisa);
