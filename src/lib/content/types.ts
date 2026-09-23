@@ -31,7 +31,20 @@ export type Block =
 	| { type: 'list'; items: string[]; ordered?: boolean }
 	| { type: 'callout'; tone: CalloutTone; title?: string; text: string }
 	| { type: 'recipe'; id: string }
-	| { type: 'table'; head: string[]; rows: string[][]; numeric?: number[] };
+	| {
+			type: 'table';
+			head: string[];
+			rows: string[][];
+			numeric?: number[];
+			/**
+			 * Ícone antes da célula, numa coluna só (ex.: o símbolo do dia da
+			 * semana). `nomes` tem um item por linha, na mesma ordem de `rows`;
+			 * `null` quando a linha não tem ícone. O nome do sprite é conferido
+			 * contra `/icones` no build, como qualquer outro ícone — não é dado
+			 * da API, mas também não se mostra imagem quebrada.
+			 */
+			icones?: { coluna: number; nomes: (string | null)[] };
+	  };
 
 export interface Section {
 	heading: string;

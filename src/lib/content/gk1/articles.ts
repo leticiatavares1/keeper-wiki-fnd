@@ -184,7 +184,21 @@ export const articles: Article[] = [
 							['Inveja', 'Mercúrio', 'Verde', 'Snake', 'Porão da igreja velha'],
 							['Ira', 'Marte', 'Vinho', 'Inquisidor', 'Colina da bruxa'],
 							['Preguiça', 'Lua', 'Azul', 'Astrólogo', 'Farol']
-						]
+						],
+						// O ícone é o mesmo glifo que o HUD do jogo desenha no canto da
+						// tela (HUDSinIcon.spr_back, em sharedassets2.assets — não vem
+						// do balanceamento, então não passa pela extração de item).
+						icones: {
+							coluna: 1,
+							nomes: [
+								'i_hud_sin06_off',
+								'i_hud_sin05_off',
+								'i_hud_sin04_off',
+								'i_hud_sin03_off',
+								'i_hud_sin02_off',
+								'i_hud_sin01_off'
+							]
+						}
 					},
 					{
 						type: 'callout',

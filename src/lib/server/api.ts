@@ -86,6 +86,13 @@ function withArt<T extends { icone: string | null }>(alvo: T, arte: Set<string>)
 	return alvo.icone && arte.has(alvo.icone) ? alvo : { ...alvo, icone: null };
 }
 
+/** Mesma checagem, para ícone citado em artigo escrito à mão (não vem da API,
+ *  mas o PNG sim: continua valendo "não mostra imagem quebrada"). */
+export async function checkIcones(nomes: (string | null)[]): Promise<(string | null)[]> {
+	const arte = await art();
+	return nomes.map((n) => (n && arte.has(n) ? n : null));
+}
+
 async function itemArt<T extends { icone: string | null }>(alvo: T): Promise<T> {
 	return withArt(alvo, await art());
 }
