@@ -3,11 +3,12 @@
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { gamePath } from '$lib/content';
-	import { date } from '$lib/format';
+	import { date, isSeparateDlc } from '$lib/format';
 
 	let { data } = $props();
 	const content = $derived(data.content);
 	const totals = $derived(data.totals);
+	const dlcs = $derived(data.dlcs.filter(isSeparateDlc));
 	const byGroup = $derived(
 		content.groups.map((group) => ({
 			group,
@@ -75,6 +76,12 @@
 						<a href={gamePath(content, 'tecnologias')}>Tecnologias</a>
 						<p>{totals.tecnologias} pesquisas, com custo em pontos e o que cada uma libera.</p>
 					</li>
+					{#if dlcs.length}
+						<li>
+							<a href={gamePath(content, 'dlc')}>DLCs</a>
+							<p>O que {dlcs.map((d) => d.nome).join(', ')} põem no jogo, separado do jogo base.</p>
+						</li>
+					{/if}
 				</ul>
 			</section>
 		{/if}

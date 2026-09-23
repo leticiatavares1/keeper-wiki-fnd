@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { linksIn } from '$lib/richtext';
 import { availableGameIds, dataSlugs, getContent, navFor } from './index';
+import type { Dlc } from '$lib/api/types';
 import type { Block } from './types';
 
 function texts(block: Block): string[] {
@@ -63,5 +64,18 @@ describe.each(availableGameIds)('conteúdo de %s', (id) => {
 
 	it('sidebar com até seis itens por seção', () => {
 		for (const s of navFor(content)) expect(s.items.length, s.title).toBeLessThanOrEqual(6);
+	});
+
+	it('sidebar separa as DLCs e deixa Breaking Dead no jogo base', () => {
+		const dlc = (id: Dlc['id'], n: number, nome: string): Dlc => ({
+			id, n, nome, tecnologias: 0, receitas: 0, estacoes: 0, itens: 0
+		});
+		const nav = navFor(content, [
+			dlc('breaking_dead', 1, 'Breaking Dead'),
+			dlc('stranger_sins', 2, 'Stranger Sins')
+		]);
+		const secao = nav.find((s) => s.title === 'DLCs');
+		if (!content.game.apiData) return expect(secao).toBeUndefined();
+		expect(secao?.items).toEqual([{ label: 'Stranger Sins', href: `/${id}/dlc/stranger-sins` }]);
 	});
 });

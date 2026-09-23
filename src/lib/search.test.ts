@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { ItemCard, RecipeCard, Ref, Station, Tech } from '$lib/api/types';
-import { byName, byUsefulness, filterItems, filterRecipes, filterStations, filterTechs, groupBy, normalize, recipeLabel } from './search';
+import type { DlcId, ItemCard, RecipeCard, Ref, Station, Tech } from '$lib/api/types';
+import { byName, byUsefulness, filterItems, filterRecipes, filterStations, filterTechs, groupBy, matchesDlc, normalize, recipeLabel } from './search';
 
 const ref = (id: string, pt: string | null, qtd = 1): Ref => ({
 	ref_id: id,
@@ -19,7 +19,7 @@ const ref = (id: string, pt: string | null, qtd = 1): Ref => ({
 const recipe = (id: string, saida: Ref, entrada: Ref, estacao = 'Fogueira'): RecipeCard => ({
 	id,
 	origem: 'craft',
-	estacoes: [{ id: 'e', pt: estacao, en: null, icone: null }],
+	estacoes: [{ id: 'e', pt: estacao, en: null, icone: null, dlc: null }],
 	entradas: [entrada],
 	entradas_da_estacao: [],
 	saidas: [saida],
@@ -32,16 +32,24 @@ const recipe = (id: string, saida: Ref, entrada: Ref, estacao = 'Fogueira'): Rec
 	acao: null,
 	objeto_pt: null,
 	objeto_en: null,
-	objeto_icone: null
+	objeto_icone: null,
+	dlc: null
 });
 
-const item = (id: string, pt: string | null, en: string | null, tipo: string): ItemCard => ({
+const item = (
+	id: string,
+	pt: string | null,
+	en: string | null,
+	tipo: string,
+	dlc: DlcId | null = null
+): ItemCard => ({
 	id,
 	pt,
 	en,
 	tipo,
 	nao_usado: false,
 	icone: null,
+	dlc,
 	niveis: 0
 });
 
@@ -97,7 +105,8 @@ describe('filterStations e filterTechs', () => {
 			pt: 'Bancada de carpintaria',
 			en: "Carpenter's Workbench",
 			icone: null,
-			receitas: 13
+			receitas: 13,
+			dlc: null
 		}
 	];
 	const tec: Tech = {
@@ -110,6 +119,7 @@ describe('filterStations e filterTechs', () => {
 		custo: { b: 20, g: 20 },
 		oculta: false,
 		requer_dlc: 0,
+		dlc: null,
 		requer: [],
 		libera_receitas: [{ id: 'x', pt: 'Mesa de alquimia', en: null, existe: true }],
 		libera_perks: []
@@ -123,6 +133,28 @@ describe('filterStations e filterTechs', () => {
 		expect(filterTechs([tec], 'mesa de alquimia')).toHaveLength(1);
 		expect(filterTechs([tec], '', 'Anatomia e alquimia')).toHaveLength(1);
 		expect(filterTechs([tec], '', 'Cozinha')).toHaveLength(0);
+	});
+});
+
+describe('matchesDlc', () => {
+	const itens = [
+		item('pregos', 'Pregos', null, 'Metal'),
+		item('cerveja_zumbi', 'Cerveja', null, 'Comida', 'breaking_dead'),
+		item('queijo', 'Queijo', null, 'Comida', 'game_of_crone')
+	];
+
+	it('sem filtro, passa tudo', () => {
+		expect(filterItems(itens, '', '', '')).toHaveLength(3);
+	});
+
+	it('conta Breaking Dead como jogo base', () => {
+		expect(filterItems(itens, '', '', 'base').map((i) => i.id)).toEqual(['pregos', 'cerveja_zumbi']);
+		expect(matchesDlc({ dlc: 'breaking_dead' }, 'breaking_dead')).toBe(false);
+	});
+
+	it('separa uma DLC só', () => {
+		expect(filterItems(itens, '', '', 'game_of_crone').map((i) => i.id)).toEqual(['queijo']);
+		expect(filterItems(itens, '', '', 'stranger_sins')).toHaveLength(0);
 	});
 });
 

@@ -49,6 +49,40 @@ p {
 	font-weight: 400;
 }
 
+/* Derivado: seletor jogo base · DLCs na barra do site. Mesma leitura do item
+   da Sidebar (ativo em moss cheio), em linha, com moldura como um grupo de
+   botões. Alvo de toque de 36px. */
+.site-tabs {
+	display: flex;
+	margin-right: auto;
+	border: var(--border-frame) solid var(--line-strong);
+	background: var(--surface-200);
+}
+.site-tabs a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 36px;
+	padding: 0 var(--space-4);
+	font-family: var(--font-pixel);
+	font-size: 15px;
+	color: var(--ink);
+	text-decoration: none;
+}
+.site-tabs a + a {
+	border-left: 1px solid var(--line);
+}
+.site-tabs a:hover {
+	color: var(--moss-text);
+}
+.site-tabs a[aria-current] {
+	background: var(--moss);
+	color: var(--on-moss);
+}
+.site-tabs a:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
 .site-foot {
 	padding: var(--space-6) var(--space-8) var(--space-8);
 	border-top: 1px solid var(--line);
@@ -129,6 +163,16 @@ a.lp-btn:focus-visible {
 }
 
 @media (max-width: 720px) {
+	/* A barra quebra em duas linhas: marca e tema em cima, seletor embaixo. */
+	.site-tabs {
+		order: 1;
+		width: 100%;
+		margin-right: 0;
+	}
+	.site-tabs a {
+		flex: 1;
+		justify-content: center;
+	}
 	.site-bar,
 	.site-foot {
 		padding-left: var(--space-4);

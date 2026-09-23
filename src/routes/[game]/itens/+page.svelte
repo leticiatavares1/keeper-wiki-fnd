@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Badge from '$lib/components/Badge.svelte';
+	import DlcBadge from '$lib/components/DlcBadge.svelte';
+	import DlcFilter from '$lib/components/DlcFilter.svelte';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
-	import { filterItems } from '$lib/search';
+	import { filterItems, type DlcFilter as Filtro } from '$lib/search';
 
 	let { data } = $props();
 	const content = $derived(data.content);
@@ -14,13 +16,14 @@
 	let query = $state('');
 	let tipo = $state('');
 	let internos = $state(false);
+	let dlc = $state<Filtro>('');
 	let mostrar = $state(LOTE);
 
 	// Item que o jogo não usa, ou não nomeia, é peça interna: a ficha existe,
 	// porque receita aponta para ele, mas a lista só o mostra se pedirem.
 	const semNome = (i: { pt: string | null; en: string | null }) => !i.pt && !i.en;
 	const base = $derived(internos ? data.items : data.items.filter((i) => !i.nao_usado && !semNome(i)));
-	const results = $derived(filterItems(base, query, tipo));
+	const results = $derived(filterItems(base, query, tipo, dlc));
 	const visiveis = $derived(results.slice(0, mostrar));
 	const rows: [string, string][] = $derived([
 		['Itens no jogo', String(data.usados)],
@@ -33,6 +36,7 @@
 	function limpar() {
 		query = '';
 		tipo = '';
+		dlc = '';
 		mostrar = LOTE;
 	}
 </script>
@@ -88,6 +92,9 @@
 					{#each data.tipos as t (t)}<option value={t}>{t}</option>{/each}
 				</select>
 			</div>
+			{#if data.dlcs.length}
+				<DlcFilter dlcs={data.dlcs} bind:value={dlc} onchange={() => (mostrar = LOTE)} />
+			{/if}
 		</form>
 
 		<label class="fora-de-uso lp-body-sm">
@@ -110,7 +117,7 @@
 
 		{#if results.length === 0}
 			<div class="lp-empty">
-				<p>Nenhum item com esse nome. Tente o nome em inglês, ou parte da palavra.</p>
+				<p>Nenhum item com esse nome nesses filtros. Tente o nome em inglês, parte da palavra, ou limpe os filtros.</p>
 				<button type="button" class="lp-btn" onclick={limpar}>Limpar busca</button>
 			</div>
 		{:else}
@@ -124,6 +131,7 @@
 								{item.tipo ?? 'Sem tipo'}
 								{#if item.en && item.en !== item.pt}· {item.en}{/if}
 								{#if item.niveis}· {item.niveis} níveis de qualidade{/if}
+								<DlcBadge registro={item} dlcs={data.dlcs} />
 								{#if item.nao_usado}<Badge>Fora de uso</Badge>{/if}
 								{#if semNome(item)}<Badge>Sem nome</Badge>{/if}
 							</p>
@@ -162,17 +170,21 @@
 	}
 	.filtros {
 		display: grid;
-		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: var(--space-4);
 	}
-	.fora-de-uso {
-		display: flex;
-		align-items: center;
-		gap: var(--space-2);
+	/* A busca ocupa a linha; os filtros dividem a de baixo. */
+	.filtros > :first-child {
+		grid-column: 1 / -1;
 	}
 	@media (max-width: 720px) {
 		.filtros {
 			grid-template-columns: minmax(0, 1fr);
 		}
+	}
+	.fora-de-uso {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 </style>

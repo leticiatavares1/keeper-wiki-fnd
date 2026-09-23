@@ -2,6 +2,23 @@
 // que vem no JSON, em pt-BR: o que mudar lá muda aqui. O dado sai do binário do
 // jogo, extraído pelo ../reveng-graveyard-keeper — nada aqui é escrito à mão.
 
+/** De qual DLC o registro é, pelo enum `DLCEngine.DLCVersion` do jogo. Só a
+ *  tecnologia tem o campo no binário; em receita, bancada e item a API deduz
+ *  (pela tecnologia que libera e pela mesa da zona da DLC). Nulo é jogo base. */
+export type DlcId = 'breaking_dead' | 'stranger_sins' | 'game_of_crone' | 'better_save_soul';
+
+/** Uma DLC, com quanto do dado do jogo é dela. */
+export interface Dlc {
+	id: DlcId;
+	/** Posição no enum do jogo: 1 a 4. */
+	n: number;
+	nome: string;
+	tecnologias: number;
+	receitas: number;
+	estacoes: number;
+	itens: number;
+}
+
 export interface List<T> {
 	total: number;
 	limite: number;
@@ -39,6 +56,7 @@ export interface StationRef {
 	/** Sprite do objeto de mundo que é a bancada. Nulo na maioria: só 87 das 228
 	 *  bancadas distintas têm `custom_icon` no balanceamento. */
 	icone: string | null;
+	dlc: DlcId | null;
 }
 
 export interface Recipe {
@@ -74,6 +92,7 @@ export interface Recipe {
 	 *  usa o mesmo ícone da construção original. Presente em 514 das 533
 	 *  receitas de construção. */
 	objeto_icone: string | null;
+	dlc: DlcId | null;
 }
 
 /**
@@ -99,6 +118,7 @@ export type RecipeCard = Pick<
 	| 'objeto_pt'
 	| 'objeto_en'
 	| 'objeto_icone'
+	| 'dlc'
 >;
 
 export interface Item {
@@ -130,6 +150,7 @@ export interface Item {
 	ao_usar: Record<string, number>;
 	/** A parte do efeito que o jogo guarda como fórmula (perk, buff), crua. */
 	ao_usar_expr: string[];
+	dlc: DlcId | null;
 }
 
 /** Um item com níveis de qualidade: as três "Abóbora" são um grupo só.
@@ -143,6 +164,7 @@ export interface Group {
 	nao_usado: boolean;
 	/** Quantos níveis o grupo tem: 2 ou 3. */
 	niveis: number;
+	dlc: DlcId | null;
 }
 
 /** O grupo com os níveis dentro, na ordem em que o jogador os melhora. */
@@ -152,7 +174,7 @@ export interface GroupDetail extends Group {
 
 /** O recorte de item que o índice de busca manda para o navegador. Uma entrada
  *  por item que o jogador reconhece: o grupo entra no lugar dos seus níveis. */
-export type ItemCard = Pick<Item, 'id' | 'pt' | 'en' | 'tipo' | 'nao_usado' | 'icone'> & {
+export type ItemCard = Pick<Item, 'id' | 'pt' | 'en' | 'tipo' | 'nao_usado' | 'icone' | 'dlc'> & {
 	/** 0 no item comum; 2 ou 3 no grupo, que vale por todos os seus níveis. */
 	niveis: number;
 };
@@ -164,6 +186,7 @@ export interface Station {
 	/** Mesmo ícone de `StationRef`; nulo na maioria das bancadas. */
 	icone: string | null;
 	receitas: number;
+	dlc: DlcId | null;
 }
 
 export interface ItemRecipes {
@@ -196,6 +219,7 @@ export interface Tech {
 	custo: Record<string, number>;
 	oculta: boolean;
 	requer_dlc: number;
+	dlc: DlcId | null;
 	requer: TechRef[];
 	libera_receitas: TechRecipe[];
 	libera_perks: string[];

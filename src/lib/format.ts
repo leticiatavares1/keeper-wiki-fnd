@@ -2,7 +2,7 @@
 // `stat`, quantidade com ×, tempo em s/min. O que o jogo guarda como fórmula
 // aparece como fórmula — não se arredonda o que não é número.
 
-import type { Item, RecipeCard, Ref, Station, StationRef, Tech, TechRef } from '$lib/api/types';
+import type { DlcId, Item, RecipeCard, Ref, Station, StationRef, Tech, TechRef } from '$lib/api/types';
 
 const nf = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
 
@@ -143,4 +143,23 @@ export function recipeDetail(recipe: RecipeCard): string {
 /** Tecnologia sem ramo fica junta no fim, não some. */
 export function techBranch(tech: Tech): string {
 	return tech.ramo_pt ?? 'Sem ramo';
+}
+
+/** DLCs que o jogo marca e a wiki conta como jogo base. Breaking Dead (os
+ *  zumbis) virou atualização gratuita: quem tem o jogo tem os zumbis. */
+const DLC_NO_JOGO_BASE: DlcId[] = ['breaking_dead'];
+
+/** A DLC que a wiki mostra para o registro; nulo é jogo base. */
+export function dlcOf(registro: { dlc: DlcId | null }): DlcId | null {
+	return registro.dlc && !DLC_NO_JOGO_BASE.includes(registro.dlc) ? registro.dlc : null;
+}
+
+/** DLC que ganha seção e página própria na wiki. */
+export function isSeparateDlc(dlc: { id: DlcId }): boolean {
+	return !DLC_NO_JOGO_BASE.includes(dlc.id);
+}
+
+/** "stranger_sins" → "stranger-sins", o pedaço da URL da página da DLC. */
+export function dlcSlug(id: DlcId): string {
+	return id.replaceAll('_', '-');
 }

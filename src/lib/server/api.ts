@@ -7,10 +7,12 @@
 
 import { env } from '$env/dynamic/private';
 import type {
+	Dlc,
 	Group,
 	GroupDetail,
 	ImportInfo,
 	Item,
+	ItemCard,
 	ItemRecipes,
 	List,
 	Recipe,
@@ -152,6 +154,48 @@ export function groups(incluirNaoUsados = false): Promise<Group[]> {
 	});
 }
 
+/** As DLCs do jogo, na ordem do enum, com quanto de cada coisa é delas. */
+export function dlcs(): Promise<Dlc[]> {
+	return once('dlcs', () => get<Dlc[]>('/dlcs'));
+}
+
+const tipoVisivel = (tipo: string | null) => (tipo === 'None' ? null : tipo);
+
+/**
+ * Uma entrada por item que o jogador reconhece: os três "Abóbora" são um item
+ * só com três níveis de qualidade, e a ficha do grupo é que os mostra. Vai
+ * tudo, inclusive fora de uso: quem lista decide o que esconder. O recorte
+ * leva só o que o índice mostra; o resto está na ficha de cada item.
+ */
+export function itemCards(): Promise<ItemCard[]> {
+	return once('itens:cards', async () => {
+		const [todos, gruposDeNivel] = await Promise.all([items(true), groups(true)]);
+		const soltos: ItemCard[] = todos
+			.filter((i) => !i.grupo)
+			.map((i) => ({
+				id: i.id,
+				pt: i.pt,
+				en: i.en,
+				tipo: tipoVisivel(i.tipo),
+				nao_usado: i.nao_usado,
+				icone: i.icone,
+				dlc: i.dlc,
+				niveis: 0
+			}));
+		const comNivel: ItemCard[] = gruposDeNivel.map((g) => ({
+			id: g.id,
+			pt: g.pt,
+			en: g.en,
+			tipo: tipoVisivel(g.tipo),
+			nao_usado: g.nao_usado,
+			icone: g.icone,
+			dlc: g.dlc,
+			niveis: g.niveis
+		}));
+		return [...soltos, ...comNivel];
+	});
+}
+
 export function techs(): Promise<Tech[]> {
 	return once('tecnologias', () => getAll<Tech>('/tecnologias'));
 }
@@ -174,7 +218,8 @@ export function toCard(r: Recipe): RecipeCard {
 		acao: r.acao,
 		objeto_pt: r.objeto_pt,
 		objeto_en: r.objeto_en,
-		objeto_icone: r.objeto_icone
+		objeto_icone: r.objeto_icone,
+		dlc: r.dlc
 	};
 }
 

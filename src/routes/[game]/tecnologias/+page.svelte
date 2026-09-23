@@ -1,19 +1,22 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import DlcBadge from '$lib/components/DlcBadge.svelte';
+	import DlcFilter from '$lib/components/DlcFilter.svelte';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
 	import { points, techBranch, techName } from '$lib/format';
-	import { filterTechs, groupBy } from '$lib/search';
+	import { filterTechs, groupBy, type DlcFilter as Filtro } from '$lib/search';
 
 	let { data } = $props();
 	const content = $derived(data.content);
 
 	let query = $state('');
 	let ramo = $state('');
+	let dlc = $state<Filtro>('');
 
-	const results = $derived(filterTechs(data.techs, query, ramo));
+	const results = $derived(filterTechs(data.techs, query, ramo, dlc));
 	const grupos = $derived(groupBy(results, techBranch));
 	const rows: [string, string][] = $derived([
 		['Tecnologias', String(data.techs.length)],
@@ -78,6 +81,7 @@
 					{#each data.ramos as r (r)}<option value={r}>{r}</option>{/each}
 				</select>
 			</div>
+			{#if data.dlcs.length}<DlcFilter dlcs={data.dlcs} bind:value={dlc} />{/if}
 		</form>
 
 		<p class="lp-label" aria-live="polite">
@@ -86,13 +90,14 @@
 
 		{#if results.length === 0}
 			<div class="lp-empty">
-				<p>Nenhuma tecnologia com esse nome nesse ramo. Limpe o filtro e tente de novo.</p>
+				<p>Nenhuma tecnologia com esse nome nesses filtros. Limpe os filtros e tente de novo.</p>
 				<button
 					type="button"
 					class="lp-btn"
 					onclick={() => {
 						query = '';
 						ramo = '';
+						dlc = '';
 					}}>Limpar busca</button
 				>
 			</div>
@@ -106,7 +111,7 @@
 					<ul class="wiki-index tech-list">
 						{#each grupo.items as tech (tech.id)}
 							<li>
-								<h3>{techName(tech)}</h3>
+								<h3>{techName(tech)} <DlcBadge registro={tech} dlcs={data.dlcs} /></h3>
 								<p class="tech-custo">
 									<span class="lp-stat"
 										>{points(tech.custo)
@@ -137,8 +142,17 @@
 <style>
 	.filtros {
 		display: grid;
-		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: var(--space-4);
+	}
+	/* A busca ocupa a linha; os filtros dividem a de baixo. */
+	.filtros > :first-child {
+		grid-column: 1 / -1;
+	}
+	@media (max-width: 720px) {
+		.filtros {
+			grid-template-columns: minmax(0, 1fr);
+		}
 	}
 	/* Derivado: o design system não define título com imagem — só o ícone do
 	   ramo, fixo e sempre presente, na frente do nome do grupo. */
@@ -164,10 +178,5 @@
 	}
 	.tech-custo .lp-stat {
 		color: var(--candle-text);
-	}
-	@media (max-width: 720px) {
-		.filtros {
-			grid-template-columns: minmax(0, 1fr);
-		}
 	}
 </style>

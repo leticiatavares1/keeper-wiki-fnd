@@ -1,24 +1,27 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Badge from '$lib/components/Badge.svelte';
+	import DlcBadge from '$lib/components/DlcBadge.svelte';
+	import DlcFilter from '$lib/components/DlcFilter.svelte';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
 	import { date, stationName } from '$lib/format';
-	import { filterStations } from '$lib/search';
+	import { filterStations, type DlcFilter as Filtro } from '$lib/search';
 
 	let { data } = $props();
 	const content = $derived(data.content);
 
 	let query = $state('');
 	let internas = $state(false);
+	let dlc = $state<Filtro>('');
 
 	// Bancada que o jogo não nomeia é objeto interno (spawner, arbusto, teste):
 	// a página existe, porque a ficha do item aponta para ela, mas a lista a esconde.
 	const semNome = (s: { pt: string | null; en: string | null }) => !s.pt && !s.en;
 	const base = $derived(internas ? data.stations : data.stations.filter((s) => !semNome(s)));
-	const results = $derived(filterStations(base, query));
+	const results = $derived(filterStations(base, query, dlc));
 	const rows: [string, string][] = $derived([
 		['Itens', String(data.totals.itens)],
 		['Receitas', String(data.totals.receitas)],
@@ -64,6 +67,7 @@
 					bind:value={query}
 				/>
 			</div>
+			{#if data.dlcs.length}<DlcFilter dlcs={data.dlcs} bind:value={dlc} />{/if}
 		</form>
 
 		<label class="internas lp-body-sm">
@@ -77,8 +81,15 @@
 
 		{#if results.length === 0}
 			<div class="lp-empty">
-				<p>Nenhuma bancada com esse nome. Tente parte da palavra, ou o nome em inglês.</p>
-				<button type="button" class="lp-btn" onclick={() => (query = '')}>Limpar busca</button>
+				<p>Nenhuma bancada com esse nome nesse filtro. Tente parte da palavra, o nome em inglês, ou limpe o filtro.</p>
+				<button
+					type="button"
+					class="lp-btn"
+					onclick={() => {
+						query = '';
+						dlc = '';
+					}}>Limpar busca</button
+				>
 			</div>
 		{:else}
 			<ul class="wiki-index">
@@ -90,6 +101,7 @@
 							<p>
 								{station.receitas === 1 ? '1 receita' : `${station.receitas} receitas`}
 								{#if station.en && station.en !== stationName(station)}· {station.en}{/if}
+								<DlcBadge registro={station} dlcs={data.dlcs} />
 								{#if semNome(station)}<Badge>Sem nome</Badge>{/if}
 							</p>
 						</div>
@@ -121,7 +133,13 @@
 	}
 	.filtros {
 		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 		gap: var(--space-4);
+	}
+	@media (max-width: 720px) {
+		.filtros {
+			grid-template-columns: minmax(0, 1fr);
+		}
 	}
 	.internas {
 		display: flex;

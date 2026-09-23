@@ -1,3 +1,5 @@
+import type { Dlc } from '$lib/api/types';
+import { dlcSlug, isSeparateDlc } from '$lib/format';
 import gk1 from './gk1';
 import type { Game, GameContent, NavSection } from './types';
 
@@ -28,10 +30,18 @@ export function gamePath(content: GameContent, slug?: string): string {
 }
 
 /** Rotas geradas a partir da API. Nenhum artigo pode usar esses slugs. */
-export const dataSlugs = ['receitas', 'itens', 'tecnologias'] as const;
+export const dataSlugs = ['receitas', 'itens', 'tecnologias', 'dlc'] as const;
 
-/** Sidebar do jogo: início, páginas do dado do jogo e artigos por grupo. */
-export function navFor(content: GameContent): NavSection[] {
+/** Página de uma DLC. */
+export function dlcPath(content: GameContent, dlc: Dlc | Dlc['id']): string {
+	return `${gamePath(content, 'dlc')}/${dlcSlug(typeof dlc === 'string' ? dlc : dlc.id)}`;
+}
+
+/**
+ * Sidebar do jogo: início, páginas do dado do jogo, uma entrada por DLC e os
+ * artigos por grupo. As DLCs vêm da API (`/dlcs`); sem elas, a seção some.
+ */
+export function navFor(content: GameContent, dlcs: Dlc[] = []): NavSection[] {
 	const base = gamePath(content);
 	const dados = content.game.apiData
 		? [
@@ -40,11 +50,20 @@ export function navFor(content: GameContent): NavSection[] {
 				{ label: 'Tecnologias', href: `${base}/tecnologias` }
 			]
 		: [];
+	const separadas = content.game.apiData ? dlcs.filter(isSeparateDlc) : [];
 	return [
 		{
 			title: content.game.short,
 			items: [{ label: 'Início', href: base }, ...dados]
 		},
+		...(separadas.length
+			? [
+					{
+						title: 'DLCs',
+						items: separadas.map((d) => ({ label: d.nome, href: dlcPath(content, d) }))
+					}
+				]
+			: []),
 		...content.groups.map((group) => ({
 			title: group,
 			items: content.articles
