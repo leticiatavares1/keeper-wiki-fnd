@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import Badge from '$lib/components/Badge.svelte';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Sprite from '$lib/components/Sprite.svelte';
@@ -11,8 +12,13 @@
 	const content = $derived(data.content);
 
 	let query = $state('');
+	let internas = $state(false);
 
-	const results = $derived(filterStations(data.stations, query));
+	// Bancada que o jogo não nomeia é objeto interno (spawner, arbusto, teste):
+	// a página existe, porque a ficha do item aponta para ela, mas a lista a esconde.
+	const semNome = (s: { pt: string | null; en: string | null }) => !s.pt && !s.en;
+	const base = $derived(internas ? data.stations : data.stations.filter((s) => !semNome(s)));
+	const results = $derived(filterStations(base, query));
 	const rows: [string, string][] = $derived([
 		['Itens', String(data.totals.itens)],
 		['Receitas', String(data.totals.receitas)],
@@ -60,6 +66,11 @@
 			</div>
 		</form>
 
+		<label class="internas lp-body-sm">
+			<input type="checkbox" class="lp-check" bind:checked={internas} />
+			Mostrar também as bancadas que o jogo não nomeia
+		</label>
+
 		<p class="lp-label" aria-live="polite">
 			{results.length === 1 ? '1 bancada' : `${results.length} bancadas`}
 		</p>
@@ -79,6 +90,7 @@
 							<p>
 								{station.receitas === 1 ? '1 receita' : `${station.receitas} receitas`}
 								{#if station.en && station.en !== stationName(station)}· {station.en}{/if}
+								{#if semNome(station)}<Badge>Sem nome</Badge>{/if}
 							</p>
 						</div>
 					</li>
@@ -87,7 +99,8 @@
 		{/if}
 
 		<p class="lp-body-sm lp-muted">
-			Os nomes vêm da tradução oficial do jogo. A busca aceita também o nome em inglês.
+			Os nomes vêm da tradução oficial do jogo. A busca aceita também o nome em inglês. Bancada
+			que o jogo não nomeia aparece com o código interno dela, e só quando você marca a caixa acima.
 		</p>
 	</article>
 
@@ -109,5 +122,10 @@
 	.filtros {
 		display: grid;
 		gap: var(--space-4);
+	}
+	.internas {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 </style>

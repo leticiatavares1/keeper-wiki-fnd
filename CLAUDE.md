@@ -88,7 +88,7 @@ A ficha existe para **todo** item, inclusive os marcados como `nao_usado`: oito 
 - **Número de jogo vem da API, não do teclado.** Receita, item, tecnologia, preço, tempo: tudo sai de `../keeper-wiki-bkd`, que serve o dado extraído do binário pelo `../reveng-graveyard-keeper`. Nunca escreva um desses números à mão no `src/lib/content/`, nem "só para o exemplo".
 - O que **não** está na API — dica, ordem de prioridade, explicação de mecânica, tabela de energia de comida — continua sendo artigo escrito à mão, e aí vale a regra antiga: **não escreva fato do jogo sem fonte**. As fontes usadas foram a Graveyard Keeper Wiki (graveyardkeeper.fandom.com, pela API MediaWiki: o site bloqueia fetch direto com 402) e guias do GameRant, do TheGamer e da Steam.
 - **Imagem de item também vem da API.** Nada de baixar sprite à mão para dentro de `static/`, nem apontar `<img>` para fora do site. Faltou arte? É extração, no `../reveng-graveyard-keeper`.
-- Os nomes de item e bancada são a **tradução oficial do jogo**, que vem da API. Onde ela não existe (75 itens e 28 bancadas), a tela cai no nome em inglês e, na falta dele, no id do jogo. Não invente tradução.
+- Os nomes de item e bancada são a **tradução oficial do jogo**, que vem da API. Onde ela não existe (24 itens, todos bônus de sermão `b_*`, e 66 bancadas, quase todas objetos internos como spawner e arbusto), a tela cai no id do jogo, e os índices de itens e de bancadas escondem esses nomes atrás de uma caixa de seleção. A ficha e a página continuam existindo, porque receita aponta para elas. Não invente tradução.
 
 ## Interface: sempre use a skill `lapide-designer`
 

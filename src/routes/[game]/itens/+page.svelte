@@ -13,16 +13,20 @@
 	const LOTE = 80;
 	let query = $state('');
 	let tipo = $state('');
-	let naoUsados = $state(false);
+	let internos = $state(false);
 	let mostrar = $state(LOTE);
 
-	const base = $derived(naoUsados ? data.items : data.items.filter((i) => !i.nao_usado));
+	// Item que o jogo não usa, ou não nomeia, é peça interna: a ficha existe,
+	// porque receita aponta para ele, mas a lista só o mostra se pedirem.
+	const semNome = (i: { pt: string | null; en: string | null }) => !i.pt && !i.en;
+	const base = $derived(internos ? data.items : data.items.filter((i) => !i.nao_usado && !semNome(i)));
 	const results = $derived(filterItems(base, query, tipo));
 	const visiveis = $derived(results.slice(0, mostrar));
 	const rows: [string, string][] = $derived([
 		['Itens no jogo', String(data.usados)],
 		['Com níveis', String(data.comNivel)],
-		['Fora de uso', String(data.items.length - data.usados)],
+		['Fora de uso', String(data.items.filter((i) => i.nao_usado).length)],
+		['Sem nome', String(data.items.filter(semNome).length)],
 		['Tipos', String(data.tipos.length)]
 	]);
 
@@ -90,13 +94,13 @@
 			<input
 				type="checkbox"
 				class="lp-check"
-				checked={naoUsados}
+				checked={internos}
 				onchange={(e) => {
-					naoUsados = e.currentTarget.checked;
+					internos = e.currentTarget.checked;
 					mostrar = LOTE;
 				}}
 			/>
-			Mostrar também os itens que o jogo não usa
+			Mostrar também os itens que o jogo não usa ou não nomeia
 		</label>
 
 		<p class="lp-label" aria-live="polite">
@@ -121,6 +125,7 @@
 								{#if item.en && item.en !== item.pt}· {item.en}{/if}
 								{#if item.niveis}· {item.niveis} níveis de qualidade{/if}
 								{#if item.nao_usado}<Badge>Fora de uso</Badge>{/if}
+								{#if semNome(item)}<Badge>Sem nome</Badge>{/if}
 							</p>
 						</div>
 					</li>
@@ -136,7 +141,8 @@
 		{/if}
 
 		<p class="lp-body-sm lp-muted">
-			Setenta e cinco itens não têm tradução oficial: nesses, a wiki mostra o nome em inglês.
+			Os nomes vêm da tradução oficial do jogo. Item que o jogo não nomeia aparece com o código
+			interno dele, e só quando você marca a caixa acima.
 		</p>
 	</article>
 

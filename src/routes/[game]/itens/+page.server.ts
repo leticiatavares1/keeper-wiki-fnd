@@ -48,7 +48,8 @@ export const load: PageServerLoad = async ({ params }) => {
 	return {
 		items: entradas,
 		tipos,
-		usados: entradas.filter((i) => !i.nao_usado).length,
-		comNivel: comNivel.filter((g) => !g.nao_usado).length
+		// O que a lista mostra sem a caixa marcada: nem fora de uso, nem sem nome.
+		usados: entradas.filter((i) => !i.nao_usado && (i.pt || i.en)).length,
+		comNivel: comNivel.filter((g) => !g.nao_usado && (g.pt || g.en)).length
 	};
 };

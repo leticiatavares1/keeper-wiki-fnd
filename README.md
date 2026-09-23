@@ -150,8 +150,9 @@ a receita na API e quebra se ela não existir.
   [Graveyard Keeper Wiki](https://graveyardkeeper.fandom.com) (via API
   MediaWiki), com apoio de guias do GameRant, do TheGamer e da Steam.
 - Nome de item e de bancada é a tradução oficial do jogo, que vem da API. Onde
-  ela não existe (75 itens e 28 bancadas), a tela mostra o nome em inglês e, na
-  falta dele, o id do jogo. A busca aceita os três.
+  ela não existe (24 itens e 66 bancadas, peças internas do jogo), a tela mostra
+  o id do jogo, e os índices só listam esses se você pedir. A busca aceita o nome
+  em pt-BR, o nome em inglês e o id.
 
 ## Interface
 
