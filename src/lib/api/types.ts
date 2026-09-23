@@ -36,6 +36,9 @@ export interface StationRef {
 	id: string;
 	pt: string | null;
 	en: string | null;
+	/** Sprite do objeto de mundo que é a bancada. Nulo na maioria: só 87 das 228
+	 *  bancadas distintas têm `custom_icon` no balanceamento. */
+	icone: string | null;
 }
 
 export interface Recipe {
@@ -67,6 +70,10 @@ export interface Recipe {
 	objeto_id: string | null;
 	objeto_pt: string | null;
 	objeto_en: string | null;
+	/** Sprite que o menu de construção mostra para este resultado — a demolição
+	 *  usa o mesmo ícone da construção original. Presente em 514 das 533
+	 *  receitas de construção. */
+	objeto_icone: string | null;
 }
 
 /**
@@ -91,6 +98,7 @@ export type RecipeCard = Pick<
 	| 'acao'
 	| 'objeto_pt'
 	| 'objeto_en'
+	| 'objeto_icone'
 >;
 
 export interface Item {
@@ -153,6 +161,8 @@ export interface Station {
 	id: string;
 	pt: string | null;
 	en: string | null;
+	/** Mesmo ícone de `StationRef`; nulo na maioria das bancadas. */
+	icone: string | null;
 	receitas: number;
 }
 
@@ -179,6 +189,9 @@ export interface Tech {
 	en: string | null;
 	ramo_n: number | null;
 	ramo_pt: string | null;
+	/** Ícone fixo do ramo (`"i_tbranch_" + ramo_n`, 8 valores) — não existe
+	 *  ícone por tecnologia individual, só por ramo. Sempre presente. */
+	ramo_icone: string;
 	/** Custo em pontos, por cor: r (vermelho), g (verde), b (azul). */
 	custo: Record<string, number>;
 	oculta: boolean;

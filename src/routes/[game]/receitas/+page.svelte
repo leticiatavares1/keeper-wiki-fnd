@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
 	import { date, stationName } from '$lib/format';
 	import { filterStations } from '$lib/search';
@@ -72,11 +73,14 @@
 			<ul class="wiki-index">
 				{#each results as station (station.id)}
 					<li>
-						<a href="{gamePath(content, 'receitas')}/{station.id}">{stationName(station)}</a>
-						<p>
-							{station.receitas === 1 ? '1 receita' : `${station.receitas} receitas`}
-							{#if station.en && station.en !== stationName(station)}· {station.en}{/if}
-						</p>
+						<Sprite icone={station.icone} />
+						<div>
+							<a href="{gamePath(content, 'receitas')}/{station.id}">{stationName(station)}</a>
+							<p>
+								{station.receitas === 1 ? '1 receita' : `${station.receitas} receitas`}
+								{#if station.en && station.en !== stationName(station)}· {station.en}{/if}
+							</p>
+						</div>
 					</li>
 				{/each}
 			</ul>
@@ -91,6 +95,17 @@
 </div>
 
 <style>
+	/* Derivado: mesmo padrão do índice de itens — a imagem da bancada na frente
+	   do nome, célula do inventário fixa mesmo quando falta ícone (a maioria). */
+	.wiki-index li {
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-3);
+	}
+	.wiki-index li div {
+		display: grid;
+		gap: var(--space-1);
+	}
 	.filtros {
 		display: grid;
 		gap: var(--space-4);

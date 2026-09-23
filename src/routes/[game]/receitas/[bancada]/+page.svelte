@@ -3,6 +3,7 @@
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Recipe from '$lib/components/Recipe.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
 	import { stationName } from '$lib/format';
 	import { filterRecipes } from '$lib/search';
@@ -99,7 +100,15 @@
 		</p>
 	</article>
 
-	<Infobox title={nome} subtitle="Bancada" {rows} />
+	{#snippet bancadaMedia()}
+		<Sprite icone={data.station.icone} grande />
+	{/snippet}
+	<Infobox
+		title={nome}
+		subtitle="Bancada"
+		{rows}
+		media={data.station.icone ? bancadaMedia : undefined}
+	/>
 </div>
 
 <style>

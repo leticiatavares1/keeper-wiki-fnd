@@ -29,7 +29,9 @@
 	// ("Remove"), construir produz o que se ergue ("Put").
 	const objeto = $derived(recipe.objeto_pt ?? recipe.objeto_en);
 	const objetoSlot: Slot[] = $derived(
-		objeto ? [{ href: null, nome: objeto, qtd: '', icone: null, estrela: null }] : []
+		objeto
+			? [{ href: null, nome: objeto, qtd: '', icone: recipe.objeto_icone, estrela: null }]
+			: []
 	);
 	const entra: Slot[] = $derived(
 		recipe.entradas.length

@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import Infobox from '$lib/components/Infobox.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import Sprite from '$lib/components/Sprite.svelte';
 	import { gamePath } from '$lib/content';
 	import { points, techBranch, techName } from '$lib/format';
 	import { filterTechs, groupBy } from '$lib/search';
@@ -98,7 +99,10 @@
 		{:else}
 			{#each grupos as grupo (grupo.key)}
 				<section class="wiki-section">
-					<h2 class="lp-h2">{grupo.key}</h2>
+					<h2 class="lp-h2 ramo-titulo">
+						<Sprite icone={grupo.items[0].ramo_icone} />
+						{grupo.key}
+					</h2>
 					<ul class="wiki-index tech-list">
 						{#each grupo.items as tech (tech.id)}
 							<li>
@@ -135,6 +139,13 @@
 		display: grid;
 		grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 		gap: var(--space-4);
+	}
+	/* Derivado: o design system não define título com imagem — só o ícone do
+	   ramo, fixo e sempre presente, na frente do nome do grupo. */
+	.ramo-titulo {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 	/* Derivado: item de índice sem link, para tecnologia, que não tem página
 	   própria. O título usa a mesma medida do link de .wiki-index. */

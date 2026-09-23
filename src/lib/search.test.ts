@@ -19,7 +19,7 @@ const ref = (id: string, pt: string | null, qtd = 1): Ref => ({
 const recipe = (id: string, saida: Ref, entrada: Ref, estacao = 'Fogueira'): RecipeCard => ({
 	id,
 	origem: 'craft',
-	estacoes: [{ id: 'e', pt: estacao, en: null }],
+	estacoes: [{ id: 'e', pt: estacao, en: null, icone: null }],
 	entradas: [entrada],
 	entradas_da_estacao: [],
 	saidas: [saida],
@@ -31,7 +31,8 @@ const recipe = (id: string, saida: Ref, entrada: Ref, estacao = 'Fogueira'): Rec
 	pontos_tecnologia: {},
 	acao: null,
 	objeto_pt: null,
-	objeto_en: null
+	objeto_en: null,
+	objeto_icone: null
 });
 
 const item = (id: string, pt: string | null, en: string | null, tipo: string): ItemCard => ({
@@ -91,7 +92,13 @@ describe('filterRecipes', () => {
 
 describe('filterStations e filterTechs', () => {
 	const bancadas: Station[] = [
-		{ id: 'mf_workbench_1', pt: 'Bancada de carpintaria', en: "Carpenter's Workbench", receitas: 13 }
+		{
+			id: 'mf_workbench_1',
+			pt: 'Bancada de carpintaria',
+			en: "Carpenter's Workbench",
+			icone: null,
+			receitas: 13
+		}
 	];
 	const tec: Tech = {
 		id: 'Advanced alchemy',
@@ -99,6 +106,7 @@ describe('filterStations e filterTechs', () => {
 		en: 'Advanced Alchemy',
 		ramo_n: 1,
 		ramo_pt: 'Anatomia e alquimia',
+		ramo_icone: 'i_tbranch_1',
 		custo: { b: 20, g: 20 },
 		oculta: false,
 		requer_dlc: 0,

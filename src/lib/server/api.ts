@@ -90,7 +90,10 @@ async function itemArt<T extends { icone: string | null }>(alvo: T): Promise<T> 
 	return withArt(alvo, await art());
 }
 
-/** Mesma limpeza nas três pontas de uma receita. */
+/** Mesma limpeza nas pontas de uma receita: entradas, saídas, estações e o
+ *  objeto de construção. `ramo_icone` de tecnologia não passa por aqui — são
+ *  8 sprites fixos (`i_tbranch_1..8`), não um nome extraído por instância, e
+ *  os oito já foram conferidos contra `resources.assets`. */
 async function recipeArt(r: Recipe): Promise<Recipe> {
 	const arte = await art();
 	const refs = (lista: Ref[]) => lista.map((ref) => withArt(ref, arte));
@@ -98,7 +101,9 @@ async function recipeArt(r: Recipe): Promise<Recipe> {
 		...r,
 		entradas: refs(r.entradas),
 		entradas_da_estacao: refs(r.entradas_da_estacao),
-		saidas: refs(r.saidas)
+		saidas: refs(r.saidas),
+		estacoes: r.estacoes.map((e) => withArt(e, arte)),
+		objeto_icone: r.objeto_icone && arte.has(r.objeto_icone) ? r.objeto_icone : null
 	};
 }
 
@@ -109,7 +114,11 @@ export function importInfo(): Promise<ImportInfo> {
 
 /** Bancadas, fornos e mesas de construção, com quantas receitas cada uma tem. */
 export function stations(): Promise<Station[]> {
-	return once('estacoes', () => get<Station[]>('/estacoes'));
+	return once('estacoes', async () => {
+		const todas = await get<Station[]>('/estacoes');
+		const arte = await art();
+		return todas.map((e) => withArt(e, arte));
+	});
 }
 
 /** A wiki gera página para todo item, inclusive os marcados como não usados:
@@ -157,7 +166,8 @@ export function toCard(r: Recipe): RecipeCard {
 		pontos_tecnologia: r.pontos_tecnologia,
 		acao: r.acao,
 		objeto_pt: r.objeto_pt,
-		objeto_en: r.objeto_en
+		objeto_en: r.objeto_en,
+		objeto_icone: r.objeto_icone
 	};
 }
 
