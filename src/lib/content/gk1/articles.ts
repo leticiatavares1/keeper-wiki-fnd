@@ -367,13 +367,24 @@ export const articles: Article[] = [
 						head: ['Decoração', 'Tipo', 'Nota'],
 						numeric: [2],
 						rows: [
-							['Marco de madeira', 'Lápide', '+1'],
-							['Cruz de madeira', 'Lápide', '+2'],
-							['Lápide', 'Lápide', '+2'],
-							['Cruz de pedra', 'Lápide', '+3'],
-							['Cerca de túmulo de madeira', 'Cerca', '+1'],
-							['Cerca de túmulo de pedra', 'Cerca', '+2']
-						]
+							['[Marcador de madeira](/gk1/itens/grave_top_wd_tab_1)', 'Lápide', '+1'],
+							['[Cruz de madeira](/gk1/itens/grave_top_wd_cross_1)', 'Lápide', '+2'],
+							['[Lápide](/gk1/itens/grave_top_stn_plate_1)', 'Lápide', '+2'],
+							['[Cruz de pedra](/gk1/itens/grave_top_stn_cross_1)', 'Lápide', '+3'],
+							['[Cerca de madeira de túmulo](/gk1/itens/grave_bot_wd_1)', 'Cerca', '+1'],
+							['[Cerca de pedra de túmulo](/gk1/itens/grave_bot_stn_1)', 'Cerca', '+2']
+						],
+						icones: {
+							coluna: 0,
+							nomes: [
+								'i_grave_top_wd_tab_1',
+								'i_grave_top_wd_cross_1',
+								'i_grave_top_stn_plate_1',
+								'i_grave_top_stn_cross_1',
+								'i_grave_bot_wd_1',
+								'i_grave_bot_stn_1'
+							]
+						}
 					},
 					{ type: 'recipe', id: 'grave_top_wd_cross_1' },
 					{ type: 'recipe', id: 'grave_bot_wd_1' }
@@ -475,13 +486,33 @@ export const articles: Article[] = [
 						type: 'table',
 						head: ['Remova', 'Efeito', 'Tecnologia'],
 						rows: [
-							['Sangue ou gordura', '−1 vermelho, +1 branco', 'Softspares'],
-							['Carne', '−1 branco', 'First slice'],
-							['Osso', 'Nenhum', 'Hardspares'],
-							['Pele', '+1 vermelho, −1 branco', 'Hardspares'],
-							['Crânio', '+1 vermelho', 'Hardspares'],
-							['Cérebro, coração ou intestino', 'Aleatório', 'Important parts']
-						]
+							['[Sangue](/gk1/itens/blood)', '−1 vermelho, +1 branco', 'Softspares'],
+							['[Gordura](/gk1/itens/fat)', '−1 vermelho, +1 branco', 'Softspares'],
+							['[Carne](/gk1/itens/flesh)', '−1 branco', 'First slice'],
+							['[Osso](/gk1/itens/bone)', 'Nenhum', 'Hardspares'],
+							['[Pele](/gk1/itens/skin)', '+1 vermelho, −1 branco', 'Hardspares'],
+							['[Caveira](/gk1/itens/skull)', '+1 vermelho', 'Hardspares'],
+							// Cérebro, coração e intestinos não têm um item só: o jogo cria
+							// um por combinação de crânios (brain_1_2...), sem grupo. Não
+							// há uma ficha que represente a parte, então fica sem link.
+							['Cérebro', 'Aleatório', 'Important parts'],
+							['Coração', 'Aleatório', 'Important parts'],
+							['Intestinos', 'Aleatório', 'Important parts']
+						],
+						icones: {
+							coluna: 0,
+							nomes: [
+								'i_blood',
+								'i_fat',
+								'i_flesh',
+								'i_bone',
+								'i_skin',
+								'i_skull',
+								'i_brain',
+								'i_heart',
+								'i_intestine'
+							]
+						}
 					},
 					{
 						type: 'p',
@@ -500,10 +531,11 @@ export const articles: Article[] = [
 						type: 'table',
 						head: ['Injeção', 'Efeito'],
 						rows: [
-							['Cola', '+1 branco'],
-							['Soda cáustica', '+1 vermelho, +1 branco'],
-							['Ácido', '−1 vermelho, −1 branco']
-						]
+							['[Injeção de cola](/gk1/itens/embalm_0_1)', '+1 branco'],
+							['[Injeção de lixívia](/gk1/itens/embalm_1_1)', '+1 vermelho, +1 branco'],
+							['[Injeção de ácido](/gk1/itens/embalm_-1_-1)', '−1 vermelho, −1 branco']
+						],
+						icones: { coluna: 0, nomes: ['i_jar_green_l', 'i_jar_blue', 'i_jar_yellow'] }
 					}
 				]
 			},
@@ -518,7 +550,10 @@ export const articles: Article[] = [
 							['Cremar', 'Pira com 8 tarugos de madeira: certificado, 2 sal e 5 cinzas. Melhor para corpo com crânio vermelho.'],
 							['Jogar no rio', 'Sem certificado. Na primeira vez, Gerry reclama e ensina a cremação.'],
 							['Mesa de ressurreição', 'Vira zumbi trabalhador. Precisa de 90% de frescor ou mais.']
-						]
+						],
+						// O ícone é o que sai de cada destino: a certidão, as cinzas, o
+						// corpo que o rio leva e o zumbi.
+						icones: { coluna: 0, nomes: ['i_scroll_2', 'i_ash', 'i_body', 'i_2h_zombie'] }
 					}
 				]
 			}
