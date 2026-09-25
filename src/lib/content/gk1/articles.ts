@@ -294,12 +294,16 @@ export const articles: Article[] = [
 						head: ['Item desmontado', 'Ciência'],
 						numeric: [1],
 						rows: [
-							['Papel limpo', '2'],
-							['Anotações', '4'],
-							['Capítulo', '15'],
-							['Lente', '20'],
-							['Livro', '30']
-						]
+							['[Papel vazio](/gk1/itens/paper_clean)', '2'],
+							['[Anotações](/gk1/itens/notes)', '4'],
+							['[Capítulo](/gk1/itens/chapter)', '15'],
+							['[Lente](/gk1/itens/lense)', '20'],
+							['[Livro](/gk1/itens/book:book_hard)', '30']
+						],
+						icones: {
+							coluna: 0,
+							nomes: ['i_paper_good', 'i_note_good', 'i_chapter', 'i_lense', 'i_book_soft_2']
+						}
 					}
 				]
 			},
