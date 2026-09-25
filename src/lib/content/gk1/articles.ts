@@ -443,7 +443,7 @@ export const articles: Article[] = [
 					{
 						type: 'callout',
 						tone: 'perigo',
-						text: 'Fora do necrotério o corpo apodrece rápido. Leve-o para um palete, mesa de preparo ou mesa de embalsamar no mesmo dia.'
+						text: 'Fora do necrotério, o corpo apodrece rápido. Conserte o alçapão dos corpos (veja Entrega) assim que puder: com ele, o corpo cai direto no necrotério e não fica perdendo frescor na estrada. Até lá, leve cada corpo para um palete, mesa de preparo ou mesa de embalsamar no mesmo dia.'
 					}
 				]
 			},
