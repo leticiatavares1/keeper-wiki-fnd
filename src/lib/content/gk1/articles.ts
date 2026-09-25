@@ -526,18 +526,66 @@ export const articles: Article[] = [
 				blocks: [
 					{
 						type: 'p',
-						text: 'Faça as injeções na bancada da igreja. Cada tipo só pode ser usado uma vez por corpo. A injeção de conservante interrompe o apodrecimento de vez.'
+						text: 'Faça as injeções na bancada da igreja. Para aplicar, ponha o corpo na mesa e a injeção na janela de trabalho: ela entra sozinha, com o tempo correndo. Cada tipo só pode ser usado uma vez por corpo. Na mesa, o corpo apodrece mais devagar; na mesa de embalsamamento II, não apodrece enquanto estiver nela.'
 					},
 					{
 						type: 'table',
-						head: ['Injeção', 'Efeito'],
+						head: ['Injeção', 'Efeito', 'Tecnologia'],
 						caveiras: 1,
 						rows: [
-							['[Injeção de cola](/gk1/itens/embalm_0_1)', '+1 branco'],
-							['[Injeção de lixívia](/gk1/itens/embalm_1_1)', '+1 vermelho, +1 branco'],
-							['[Injeção de ácido](/gk1/itens/embalm_-1_-1)', '−1 vermelho, −1 branco']
+							['[Injeção de ácido](/gk1/itens/embalm_-1_-1)', '−1 vermelho, −1 branco', 'Embalming Liquids'],
+							['[Injeção de lixívia](/gk1/itens/embalm_1_1)', '+1 vermelho, +1 branco', 'Embalming Liquids'],
+							['[Injeção de cola](/gk1/itens/embalm_0_1)', '+1 branco', 'Embalming Liquids II'],
+							['[Injeção de restauração](/gk1/itens/embalm_50)', 'Tira metade do apodrecimento', 'Embalming Liquids II'],
+							['[Injeção de conservante](/gk1/itens/embalm_stop)', 'O corpo para de apodrecer de vez', 'Embalming Liquids II'],
+							['[Injeção sombria](/gk1/itens/embalm_2_0)', '+2 vermelhos', 'Embalming Liquids III'],
+							['[Injeção de prata](/gk1/itens/embalm_-1_1)', '−1 vermelho, +1 branco', 'Embalming Liquids III'],
+							['[Injeção de ouro](/gk1/itens/embalm_-2_2)', '−2 vermelhos, +2 brancos', 'Embalming Liquids III']
 						],
-						icones: { coluna: 0, nomes: ['i_jar_green_l', 'i_jar_blue', 'i_jar_yellow'] }
+						icones: {
+							coluna: 0,
+							nomes: [
+								'i_jar_yellow',
+								'i_jar_blue',
+								'i_jar_green_l',
+								'i_jar_green_l_plus',
+								'i_jar_green_l_cross',
+								'i_jar_dark',
+								'i_jar_pink',
+								'i_jar_pink_star_gold'
+							]
+						}
+					},
+					{
+						type: 'p',
+						text: 'Prata e ouro só entram se o corpo tiver os crânios vermelhos que elas tiram: 1 para a prata, 2 para o ouro. A sombria não melhora nada sozinha; ela serve para abrir espaço para as duas.'
+					}
+				]
+			},
+			{
+				heading: 'O melhor zumbi',
+				blocks: [
+					{
+						type: 'p',
+						text: 'A eficiência do zumbi, que é a velocidade com que ele trabalha, depende só dos crânios brancos. Os vermelhos não pesam. Então o objetivo é o máximo de brancos, e vermelho não importa.'
+					},
+					{
+						type: 'list',
+						ordered: true,
+						items: [
+							'Assim que o corpo chegar, aplique a injeção de conservante. A mesa de ressurreição só aceita corpo com 90% de frescor ou mais, e cada 10% perdido também tira um crânio branco. Se o frescor já caiu, use antes a de restauração.',
+							'Na mesa de preparo, tire sangue e gordura. Não tire carne nem pele: as duas tiram branco quando saem.',
+							'Troque cérebro, coração e intestinos por outros com mais crânios brancos.',
+							'Aplique a lixívia e a cola. A lixívia vem antes porque deixa o vermelho que a prata vai gastar.',
+							'Aplique a prata e depois o ouro. Se faltar vermelho, aplique a sombria antes.',
+							'Não use o ácido: ele tira um branco.',
+							'Leve o corpo para a mesa de ressurreição.'
+						]
+					},
+					{
+						type: 'callout',
+						tone: 'dica',
+						text: 'Zumbi que só vai carregar coisas não precisa de nada disso: a eficiência não muda a velocidade de transporte. Guarde as injeções para os zumbis que trabalham nas bancadas.'
 					}
 				]
 			},
