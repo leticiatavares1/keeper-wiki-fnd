@@ -45,8 +45,13 @@ describe.each(availableGameIds)('conteúdo de %s', (id) => {
 		const blocks = article.sections.flatMap((s) => s.blocks);
 
 		it(`${article.slug}: links internos apontam para rota que existe`, () => {
+			// A ficha de item vem da API: o id não dá para conferir aqui, só no
+			// build, cujo prerender quebra em link para página que não existe.
+			const ficha = new RegExp(`^/${id}/itens/[^/#]+(#nivel-\\d)?$`);
 			for (const href of blocks.flatMap(texts).flatMap(linksIn)) {
-				if (href.startsWith('/')) expect(routes, href).toContain(href);
+				if (!href.startsWith('/')) continue;
+				if (content.game.apiData && ficha.test(href)) continue;
+				expect(routes, href).toContain(href);
 			}
 		});
 

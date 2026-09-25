@@ -135,15 +135,28 @@ export const articles: Article[] = [
 						head: ['Comida', 'Como obter', 'Energia'],
 						numeric: [2],
 						rows: [
-							['Fruta silvestre', 'Colha', '+5'],
-							['Maçã vermelha', 'Colha', '+5'],
-							['Maçã assada', 'Fogueira', '+6'],
-							['Cogumelos assados', 'Fogueira', '+12'],
-							['Pão', 'Fabrique', '+15'],
-							['Carne assada', 'Fabrique', '+15'],
-							['Sanduíche', 'Fabrique', '+17'],
-							['Tigela de chucrute', 'Fabrique', '+30']
-						]
+							['[Frutinha](/gk1/itens/fruit:berry)', 'Colha', '+5'],
+							['[Maçã vermelha](/gk1/itens/fruit:apple_red_crop)', 'Colha', '+5'],
+							['[Maçã assada](/gk1/itens/snack:baked_apple)', 'Fogueira', '+8'],
+							['[Cogumelos assados](/gk1/itens/snack:baked_kebab_7)', 'Fogueira', '+12'],
+							['[Pão](/gk1/itens/snack:bread)', 'Fabrique', '+15'],
+							['[Carne cozida](/gk1/itens/meal:baked_meat)', 'Fabrique', '+18'],
+							['[Sanduíche](/gk1/itens/snack:sandwich)', 'Fabrique', '+20'],
+							['[Pote de chucrute](/gk1/itens/snack:bowl_sauerkraut)', 'Fabrique', '+30']
+						],
+						icones: {
+							coluna: 0,
+							nomes: [
+								'i_berry',
+								'i_apple_red_crop',
+								'i_baked_apple',
+								'i_baked_kebab_7',
+								'i_bread',
+								'i_baked_meat',
+								'i_sandwich',
+								'i_bowl_sauerkraut'
+							]
+						}
 					},
 					{ type: 'recipe', id: 'baked_apple' },
 					{ type: 'recipe', id: 'baked_kebab_7' }
