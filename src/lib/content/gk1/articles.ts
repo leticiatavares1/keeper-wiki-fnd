@@ -485,6 +485,7 @@ export const articles: Article[] = [
 					{
 						type: 'table',
 						head: ['Remova', 'Efeito', 'Tecnologia'],
+						caveiras: 1,
 						rows: [
 							['[Sangue](/gk1/itens/blood)', '−1 vermelho, +1 branco', 'Softspares'],
 							['[Gordura](/gk1/itens/fat)', '−1 vermelho, +1 branco', 'Softspares'],
@@ -530,6 +531,7 @@ export const articles: Article[] = [
 					{
 						type: 'table',
 						head: ['Injeção', 'Efeito'],
+						caveiras: 1,
 						rows: [
 							['[Injeção de cola](/gk1/itens/embalm_0_1)', '+1 branco'],
 							['[Injeção de lixívia](/gk1/itens/embalm_1_1)', '+1 vermelho, +1 branco'],

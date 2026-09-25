@@ -44,6 +44,11 @@ export type Block =
 			 * da API, mas também não se mostra imagem quebrada.
 			 */
 			icones?: { coluna: number; nomes: (string | null)[] };
+			/**
+			 * Coluna de efeito no corpo ("−1 vermelho, +1 branco"): "vermelho" e
+			 * "branco" viram o sprite da caveira do jogo. Sem a arte, fica o texto.
+			 */
+			caveiras?: number;
 	  };
 
 export interface Section {

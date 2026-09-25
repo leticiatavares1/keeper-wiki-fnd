@@ -5,6 +5,8 @@
 	import Recipe from './Recipe.svelte';
 	import RichText from './RichText.svelte';
 	import Sprite from './Sprite.svelte';
+	import { CAVEIRA, splitCaveiras } from '$lib/caveiras';
+	import { spritePath } from '$lib/format';
 
 	// As receitas vêm da API, buscadas no build pelo load da página.
 	let { blocks, recipes }: { blocks: Block[]; recipes: Record<string, RecipeCard> } = $props();
@@ -36,6 +38,20 @@
 											<Sprite icone={block.icones.nomes[r]} />
 											<RichText text={cell} />
 										</span>
+									{:else if block.caveiras === c}
+										{#each splitCaveiras(cell) as parte, k (k)}
+											{#if 'caveira' in parte}
+												<img
+													class="lp-sprite caveira"
+													src={spritePath(CAVEIRA[parte.caveira])}
+													alt="caveira {parte.caveira}"
+													width="22"
+													height="20"
+												/>
+											{:else}
+												<RichText text={parte.texto} />
+											{/if}
+										{/each}
 									{:else}
 										<RichText text={cell} />
 									{/if}
@@ -56,5 +72,13 @@
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-2);
+	}
+	/* Derivado: a caveira do painel do corpo no lugar da palavra "vermelho" ou
+	   "branco". O sprite tem 11×10 e vai em escala inteira ×2, alinhado à
+	   linha do texto. */
+	.caveira {
+		display: inline-block;
+		vertical-align: middle;
+		margin-inline: var(--space-1);
 	}
 </style>

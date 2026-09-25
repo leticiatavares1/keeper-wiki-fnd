@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import type { RecipeCard } from '$lib/api/types';
 import { availableGameIds, getContent } from '$lib/content';
 import type { Article } from '$lib/content/types';
+import { CAVEIRA } from '$lib/caveiras';
 import { checkIcones, recipe, toCard } from '$lib/server/api';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
@@ -21,9 +22,16 @@ async function withIconArt(article: Article, apiData?: boolean): Promise<Article
 		article.sections.map(async (s) => {
 			const blocks = await Promise.all(
 				s.blocks.map(async (b) => {
-					if (b.type !== 'table' || !b.icones) return b;
+					if (b.type !== 'table' || (!b.icones && b.caveiras === undefined)) return b;
 					mudou = true;
-					return { ...b, icones: { ...b.icones, nomes: await checkIcones(b.icones.nomes) } };
+					const tabela = { ...b };
+					if (b.icones) tabela.icones = { ...b.icones, nomes: await checkIcones(b.icones.nomes) };
+					// Faltando uma das duas caveiras, a coluna fica só no texto.
+					if (b.caveiras !== undefined) {
+						const arte = await checkIcones(Object.values(CAVEIRA));
+						if (arte.includes(null)) delete tabela.caveiras;
+					}
+					return tabela;
 				})
 			);
 			return { ...s, blocks };
